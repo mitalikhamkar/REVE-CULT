@@ -33,5 +33,5 @@ The project is currently under active development. Some of the areas being worke
 
 ---
 
-**Developer:** Mitali Khamkar  
+**Developer:** Mitali Khamkar and Vishnupriya
 Website Development Intern
