@@ -1,59 +1,37 @@
-# REVE CULT
+# REVE CULT Website
 
-REVE CULT is a women-first consumer electronics storefront — premium wireless
-earbuds, accessories, and apparel presented with a soft, editorial aesthetic.
+This repository contains my work for the **REVE CULT Website Development Internship**.
 
-This is a **standard React + Vite** project. It has no ties to any
-proprietary app platform: authentication, the shopping cart, orders,
-reviews, and support tickets are all implemented with plain React state,
-Context API, and the browser's `localStorage`, so the whole app runs
-entirely in the browser with zero backend setup.
+## About the Project
 
-## Tech stack
+REVE CULT is a consumer electronics and lifestyle brand. As part of my internship, I am working on developing the next version of the company's website with a focus on creating a modern, responsive, and premium user experience.
 
-- [React 18](https://react.dev/) with hooks
-- [Vite](https://vitejs.dev/) for dev server & bundling
-- [React Router v6](https://reactrouter.com/) for routing
-- [Tailwind CSS](https://tailwindcss.com/) + [shadcn/ui](https://ui.shadcn.com/) style primitives (Radix UI under the hood)
-- [Lucide React](https://lucide.dev/) icons
-- [TanStack Query](https://tanstack.com/query) for a small amount of client-side data caching
-- [Recharts](https://recharts.org/) for the admin dashboard charts
-- Context API + `localStorage` for cart, wishlist, auth, and the "database" (orders, reviews, addresses, support tickets)
+## Current Development
 
-## Getting started
+The project is currently under active development. Some of the areas being worked on include:
 
-```bash
-npm install
-npm run dev
-```
+- Homepage UI redesign
+- Responsive layouts
+- Product pages
+- Product showcase animations
+- Shop by Category improvements
+- User authentication (Firebase)
+- Admin Panel
+- Performance and UI enhancements
 
-Then open the URL Vite prints (typically **http://localhost:5173**).
+## Tech Stack
 
-See `RUN_GUIDE.md` for full setup instructions, demo login credentials, and
-troubleshooting tips.
+- React.js
+- Vite
+- Tailwind CSS
+- JavaScript
+- Firebase
 
-## Project structure
+## Status
 
-```
-src/
-  api/            Local "backend": auth.js (accounts/sessions), entities.js
-                   (Orders, Reviews, Addresses, etc.), localDb.js (generic
-                   localStorage CRUD engine)
-  components/      Shared UI (layout, admin, store, shadcn/ui primitives)
-  context/         StoreContext — cart / wishlist / recently viewed
-  data/            Static product catalog
-  lib/             AuthContext, small utilities
-  pages/           Route-level pages, including pages/admin/* for the admin panel
-```
+🚧 This project is currently under development and is being continuously updated as part of the internship.
 
-## Admin panel
+---
 
-Visit `/admin` while logged in as an admin account. See `RUN_GUIDE.md` for
-demo credentials.
-
-## Notes
-
-- This project stores all data (accounts, orders, reviews, etc.) in your
-  browser's `localStorage`. There is no server, so data does not sync across
-  devices/browsers and clearing site data will reset the app.
-- Product photography currently uses AI-generated placeholder images.
+**Developer:** Mitali Khamkar  
+Website Development Intern
