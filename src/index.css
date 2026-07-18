@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 38 36% 96%;
+    --foreground: 213 4% 17%;
+    --card: 0 0% 100%;
+    --card-foreground: 213 4% 17%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 213 4% 17%;
+    --primary: 13 49% 71%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 150 18% 55%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 33 30% 94%;
+    --muted-foreground: 213 4% 40%;
+    --accent: 38 36% 96%;
+    --accent-foreground: 213 4% 17%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 33 25% 89%;
+    --input: 33 25% 89%;
+    --ring: 38 41% 56%;
+    --gold: 38 41% 56%;
+    --blush: 13 49% 71%;
+    --sage: 150 18% 55%;
+    --cream: 38 36% 96%;
+    --radius: 1.25rem;
+    --font-heading: 'Cormorant Garamond', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-display: 'Cormorant Garamond', serif;
+    --font-mono: ui-monospace, monospace;
+    --sidebar-background: 38 36% 96%;
+    --sidebar-foreground: 213 4% 26%;
+    --sidebar-primary: 13 49% 71%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 33 30% 94%;
+    --sidebar-accent-foreground: 213 4% 17%;
+    --sidebar-border: 33 25% 89%;
+    --sidebar-ring: 38 41% 56%;
+  }
+
+  .dark {
+    --background: 210 6% 10%;
+    --foreground: 38 36% 96%;
+    --card: 210 6% 13%;
+    --card-foreground: 38 36% 96%;
+    --popover: 210 6% 13%;
+    --popover-foreground: 38 36% 96%;
+    --primary: 13 49% 71%;
+    --primary-foreground: 210 6% 10%;
+    --secondary: 150 18% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 6% 18%;
+    --muted-foreground: 38 20% 65%;
+    --accent: 210 6% 18%;
+    --accent-foreground: 38 36% 96%;
+    --destructive: 0 62% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 6% 20%;
+    --input: 210 6% 20%;
+    --ring: 38 41% 56%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .font-heading { font-family: var(--font-heading); }
+  .font-body { font-family: var(--font-body); }
+  .font-display { font-family: var(--font-display); }
+
+  .halo-bg {
+    background: radial-gradient(ellipse at center, hsl(13 49% 71% / 0.12) 0%, transparent 70%);
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .text-gold { color: hsl(var(--gold)); }
+  .text-blush { color: hsl(var(--blush)); }
+  .text-sage { color: hsl(var(--sage)); }
+  .bg-gold { background-color: hsl(var(--gold)); }
+  .bg-blush { background-color: hsl(var(--blush)); }
+  .bg-sage { background-color: hsl(var(--sage)); }
+  .bg-cream { background-color: hsl(var(--cream)); }
+  .border-gold { border-color: hsl(var(--gold)); }
+
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.7s ease-out forwards;
+  }
+  .animate-slide-in {
+    animation: slideIn 0.5s ease-out forwards;
+  }
+  .animate-scale-in {
+    animation: scaleIn 0.4s ease-out forwards;
+  }
+  .animate-pulse-gold {
+    animation: pulseGold 1.5s ease-in-out;
+  }
+  .animate-ritual-draw {
+    animation: ritualDraw 1.8s ease-in-out forwards;
+  }
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  .animate-showcase-float {
+    animation: showcaseFloat 4.5s ease-in-out infinite;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(38 41% 56% / 0.4); }
+  50% { box-shadow: 0 0 0 10px hsl(38 41% 56% / 0); }
+}
+@keyframes ritualDraw {
+  0% { opacity: 0; transform: scale(0.8); filter: blur(8px); }
+  50% { opacity: 1; transform: scale(1); filter: blur(0); }
+  100% { opacity: 0; transform: scale(1.05); filter: blur(4px); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes showcaseFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes heroGalleryLoadIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-gallery-load-in {
+  animation: heroGalleryLoadIn 0.7s ease-out forwards;
+  opacity: 0;
+}
+
+/* Directional slide + fade — outgoing image drifts out, incoming
+   image drifts into place, so tiles feel like they're rearranging
+   rather than swapping. */
+@keyframes heroGalleryOutUp {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to { opacity: 0; transform: translateY(-14px) scale(1.01); }
+}
+@keyframes heroGalleryInUp {
+  from { opacity: 0; transform: translateY(14px) scale(1.01); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes heroGalleryOutSide {
+  from { opacity: 1; transform: translateX(0) scale(1); }
+  to { opacity: 0; transform: translateX(-14px) scale(1.01); }
+}
+@keyframes heroGalleryInSide {
+  from { opacity: 0; transform: translateX(14px) scale(1.01); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes heroGalleryOutSideReverse {
+  from { opacity: 1; transform: translateX(0) scale(1); }
+  to { opacity: 0; transform: translateX(14px) scale(1.01); }
+}
+@keyframes heroGalleryInSideReverse {
+  from { opacity: 0; transform: translateX(-14px) scale(1.01); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+.hero-gallery-out-up { animation: heroGalleryOutUp 0.8s ease-in-out forwards; }
+.hero-gallery-in-up { animation: heroGalleryInUp 0.8s ease-in-out forwards; }
+.hero-gallery-out-side { animation: heroGalleryOutSide 0.8s ease-in-out forwards; }
+.hero-gallery-in-side { animation: heroGalleryInSide 0.8s ease-in-out forwards; }
+.hero-gallery-out-side-reverse { animation: heroGalleryOutSideReverse 0.8s ease-in-out forwards; }
+.hero-gallery-in-side-reverse { animation: heroGalleryInSideReverse 0.8s ease-in-out forwards; }
+
+/* Subtle continuous float so the gallery feels alive at rest. */
+@keyframes heroGalleryFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.hero-gallery-float {
+  animation: heroGalleryFloat 5.5s ease-in-out infinite;
+}
+
+/* Shop by Category — image cycle crossfade (fade + slight vertical slide) */
+@keyframes categoryImgOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+@keyframes categoryImgIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.category-img-out { animation: categoryImgOut 0.8s ease-in-out forwards; }
+.category-img-in { animation: categoryImgIn 0.8s ease-in-out forwards; }
+
+/* Scan & Match — premium scanning sequence */
+@keyframes visualScanSweep {
+  0% { transform: translateY(-100%); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(300%); opacity: 0; }
+}
+.visual-scan-line {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    hsl(var(--sage) / 55%) 45%,
+    hsl(var(--sage) / 55%) 55%,
+    transparent
+  );
+  animation: visualScanSweep 1.6s ease-in-out infinite;
+}
+@keyframes visualScanTextFade {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.visual-scan-text-fade {
+  animation: visualScanTextFade 0.35s ease-out;
+}

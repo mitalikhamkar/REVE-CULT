@@ -1,0 +1,16 @@
+{
+  "name": "REVE CULT",
+  "short_name": "REVE CULT",
+  "description": "REVE CULT — Technology, Styled with Intention. Premium wireless earbuds and accessories designed for modern lifestyles.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
