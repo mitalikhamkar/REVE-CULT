@@ -255,3 +255,13 @@
 .visual-scan-text-fade {
   animation: visualScanTextFade 0.35s ease-out;
 }
+
+/* Find My REVE Match — AI thinking screen wave */
+@keyframes aiWaveBounce {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.55; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+.ai-wave-bar {
+  animation: aiWaveBounce 1s ease-in-out infinite;
+  transform-origin: bottom;
+}
