@@ -167,6 +167,59 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
+/* Signature Box — closed-box idle state (homepage teaser) */
+.gift-box-idle-float { animation: giftBoxIdleFloat 6s ease-in-out infinite; }
+@keyframes giftBoxIdleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.gift-box-idle-glow { animation: giftBoxIdleGlowPulse 5s ease-in-out infinite; }
+@keyframes giftBoxIdleGlowPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+@keyframes giftBoxIdleSparkle {
+  0%, 70% { opacity: 0; }
+  78%, 88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes sparkleTwinkle {
+  0%, 100% { transform: scale(0.85); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+
+/* Signature Box — one-shot cinematic "Generate" sequence (builder page) */
+@keyframes giftBoxItemsDropIn {
+  0% { transform: translateY(-40px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes giftBoxLidCloseOnce {
+  0% { transform: rotateX(-120deg); }
+  100% { transform: rotateX(0deg); }
+}
+@keyframes giftBoxLogoFadeInOnce {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes giftBoxRibbonWrapOnce {
+  0% { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes giftBoxBowTieOnce {
+  0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+  70% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes giftBoxSparkleBurstOnce {
+  0% { opacity: 0; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes giftBoxGlowPulseOnce {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
 @keyframes heroGalleryLoadIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
@@ -175,7 +228,23 @@
   animation: heroGalleryLoadIn 0.7s ease-out forwards;
   opacity: 0;
 }
+/* --- Signature Box refinements (append to existing index.css) --- */
 
+/* Replaces the previous giftBoxIdleFloat amplitude (-10px) with a
+   subtler 2-4px premium float, per the closed-box idle spec. */
+.gift-box-idle-float { animation: giftBoxIdleFloatSubtle 6s ease-in-out infinite; }
+@keyframes giftBoxIdleFloatSubtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+/* Breathing shadow — shrinks/softens slightly as the box "floats up",
+   grows/darkens slightly as it settles back down. */
+.gift-box-idle-shadow { animation: giftBoxIdleShadowBreathe 6s ease-in-out infinite; }
+@keyframes giftBoxIdleShadowBreathe {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+  50% { transform: translateX(-50%) scale(0.92); opacity: 0.65; }
+}
 /* Directional slide + fade — outgoing image drifts out, incoming
    image drifts into place, so tiles feel like they're rearranging
    rather than swapping. */

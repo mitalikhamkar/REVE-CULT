@@ -1,3 +1,4 @@
+//Home.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles, ScanLine, ArrowRight, Quote } from "lucide-react";
@@ -9,6 +10,7 @@ import RitualLoader from "@/components/store/RitualLoader";
 import ProductShowcase from "@/components/store/ProductShowcase";
 import CategoryShowcase from "@/components/store/CategoryShowcase";
 import HeroGallery from "@/components/store/HeroGallery";
+import SignatureBoxTeaser from "@/components/store/SignatureBoxTeaser";
 
 const TESTIMONIALS = [
   { name: "Ananya", text: "The Mint Green SERAPH earbuds are honestly the prettiest tech I own. Sound is crystal clear and they look gorgeous.", role: "College Student" },
@@ -231,6 +233,9 @@ export default function Home() {
           </button>
         </div>
       </section>
+
+      {/* Create Your Signature Box — premium gifting preview */}
+      <SignatureBoxTeaser />
 
       {/* New Arrivals */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

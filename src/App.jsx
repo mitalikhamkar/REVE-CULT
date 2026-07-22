@@ -26,6 +26,7 @@ import Profile from '@/pages/Profile';
 import About from '@/pages/About';
 import Support from '@/pages/Support';
 import OrderConfirmation from '@/pages/OrderConfirmation';
+import SignatureBox from '@/pages/SignatureBox';
 
 // Admin pages
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -73,6 +74,7 @@ const AuthenticatedApp = () => {
         <Route path="/about" element={<About />} />
         <Route path="/support" element={<Support />} />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Route path="/signature-box" element={<SignatureBox />} />
 
         <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
           <Route path="/profile" element={<Profile />} />

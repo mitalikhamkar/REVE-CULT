@@ -44,6 +44,14 @@ export function StoreProvider({ children }) {
           product_price: product.price,
           color: product.color,
           quantity,
+          // Signature Box fields — undefined/null for ordinary products,
+          // so this stays backward compatible with everything already
+          // going through addToCart.
+          type: product.type || "product",
+          earbuds: product.earbuds || null,
+          pouch: product.pouch || null,
+          giftRecipient: product.giftRecipient || null,
+          giftNote: product.giftNote || null,
         },
       ];
     });

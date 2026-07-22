@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag, Gift } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
 import { ShieldCheck, Truck } from "lucide-react";
 
@@ -38,49 +38,58 @@ export default function Cart() {
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Items */}
         <div className="lg:col-span-2 space-y-4">
-          {cart.map((item) => (
-            <div key={item.product_id} className="flex gap-4 p-4 bg-white rounded-2xl border border-border animate-fade-in">
-              <Link to={`/product/${item.product_id}`}>
-                <img src={item.product_image} alt={item.product_name} className="w-24 h-24 rounded-xl object-cover shrink-0" />
-              </Link>
-              <div className="flex-1 min-w-0">
-                <Link to={`/product/${item.product_id}`} className="text-sm font-medium hover:text-blush transition-colors line-clamp-1">
-                  {item.product_name}
+          {cart.map((item) =>
+            item.type === "signature-box" ? (
+              <SignatureBoxCartCard
+                key={item.product_id}
+                item={item}
+                updateQuantity={updateQuantity}
+                removeFromCart={removeFromCart}
+              />
+            ) : (
+              <div key={item.product_id} className="flex gap-4 p-4 bg-white rounded-2xl border border-border animate-fade-in">
+                <Link to={`/product/${item.product_id}`}>
+                  <img src={item.product_image} alt={item.product_name} className="w-24 h-24 rounded-xl object-cover shrink-0" />
                 </Link>
-                {item.color && <p className="text-xs text-muted-foreground mt-0.5">{item.color}</p>}
-                <p className="text-base font-heading font-semibold mt-1">₹{item.product_price}</p>
-                <div className="flex items-center justify-between mt-3">
-                  <div className="flex items-center border border-border rounded-full">
+                <div className="flex-1 min-w-0">
+                  <Link to={`/product/${item.product_id}`} className="text-sm font-medium hover:text-blush transition-colors line-clamp-1">
+                    {item.product_name}
+                  </Link>
+                  {item.color && <p className="text-xs text-muted-foreground mt-0.5">{item.color}</p>}
+                  <p className="text-base font-heading font-semibold mt-1">₹{item.product_price}</p>
+                  <div className="flex items-center justify-between mt-3">
+                    <div className="flex items-center border border-border rounded-full">
+                      <button
+                        onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
+                        className="w-8 h-8 flex items-center justify-center hover:bg-accent rounded-l-full transition-colors"
+                        aria-label="Decrease"
+                      >
+                        <Minus size={12} />
+                      </button>
+                      <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+                        className="w-8 h-8 flex items-center justify-center hover:bg-accent rounded-r-full transition-colors"
+                        aria-label="Increase"
+                      >
+                        <Plus size={12} />
+                      </button>
+                    </div>
                     <button
-                      onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
-                      className="w-8 h-8 flex items-center justify-center hover:bg-accent rounded-l-full transition-colors"
-                      aria-label="Decrease"
+                      onClick={() => removeFromCart(item.product_id)}
+                      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
                     >
-                      <Minus size={12} />
-                    </button>
-                    <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
-                    <button
-                      onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
-                      className="w-8 h-8 flex items-center justify-center hover:bg-accent rounded-r-full transition-colors"
-                      aria-label="Increase"
-                    >
-                      <Plus size={12} />
+                      <Trash2 size={14} /> Remove
                     </button>
                   </div>
-                  <button
-                    onClick={() => removeFromCart(item.product_id)}
-                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
-                  >
-                    <Trash2 size={14} /> Remove
-                  </button>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-xs text-muted-foreground">Subtotal</p>
+                  <p className="text-base font-heading font-semibold">₹{item.product_price * item.quantity}</p>
                 </div>
               </div>
-              <div className="text-right shrink-0">
-                <p className="text-xs text-muted-foreground">Subtotal</p>
-                <p className="text-base font-heading font-semibold">₹{item.product_price * item.quantity}</p>
-              </div>
-            </div>
-          ))}
+            )
+          )}
 
           <Link to="/shop" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mt-2">
             ← Continue shopping
@@ -142,6 +151,83 @@ export default function Cart() {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Signature Box cart card — renders as ONE premium product (large hamper
+ * image, no separate earbuds line item), per the Signature Box spec.
+ * No link to a product detail page since the box isn't a catalog product.
+ */
+function SignatureBoxCartCard({ item, updateQuantity, removeFromCart }) {
+  return (
+    <div className="flex flex-col sm:flex-row gap-4 p-4 bg-white rounded-2xl border border-border animate-fade-in">
+      <img
+        src={item.product_image}
+        alt={item.product_name}
+        className="w-full sm:w-32 h-40 sm:h-32 rounded-xl object-cover shrink-0"
+      />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium">{item.product_name}</p>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blush/10 text-blush text-[10px] font-medium uppercase tracking-wide">
+            <Gift size={10} /> Gift Set
+          </span>
+        </div>
+
+        <div className="mt-1.5 space-y-0.5">
+          {item.earbuds?.name && (
+            <p className="text-xs text-muted-foreground">Selected Earbuds: {item.earbuds.name}</p>
+          )}
+          {item.pouch?.name && (
+            <p className="text-xs text-muted-foreground">Included Carry Pouch: {item.pouch.name}</p>
+          )}
+        </div>
+
+        {(item.giftRecipient || item.giftNote) && (
+          <div className="mt-2 rounded-xl bg-cream/60 border border-border/60 px-3 py-2">
+            {item.giftRecipient && (
+              <p className="text-xs font-medium text-foreground">For {item.giftRecipient}</p>
+            )}
+            {item.giftNote && (
+              <p className="text-xs text-muted-foreground italic mt-0.5">"{item.giftNote}"</p>
+            )}
+          </div>
+        )}
+
+        <p className="text-base font-heading font-semibold mt-2">₹{item.product_price}</p>
+
+        <div className="flex items-center justify-between mt-3">
+          <div className="flex items-center border border-border rounded-full">
+            <button
+              onClick={() => updateQuantity(item.product_id, item.quantity - 1)}
+              className="w-8 h-8 flex items-center justify-center hover:bg-accent rounded-l-full transition-colors"
+              aria-label="Decrease"
+            >
+              <Minus size={12} />
+            </button>
+            <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+            <button
+              onClick={() => updateQuantity(item.product_id, item.quantity + 1)}
+              className="w-8 h-8 flex items-center justify-center hover:bg-accent rounded-r-full transition-colors"
+              aria-label="Increase"
+            >
+              <Plus size={12} />
+            </button>
+          </div>
+          <button
+            onClick={() => removeFromCart(item.product_id)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
+          >
+            <Trash2 size={14} /> Remove
+          </button>
+        </div>
+      </div>
+      <div className="text-right shrink-0">
+        <p className="text-xs text-muted-foreground">Subtotal</p>
+        <p className="text-base font-heading font-semibold">₹{item.product_price * item.quantity}</p>
       </div>
     </div>
   );

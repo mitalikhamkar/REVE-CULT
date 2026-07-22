@@ -149,6 +149,7 @@ export const PRODUCTS = [
     color_hex: "#3A3A3A",
     image_url: "/images/airpods/REVE%20SERAPH%20-%20Silver%20Black.png",
     gallery_urls: ["/images/airpods/REVE%20SERAPH%20-%20Silver%20Black.png"],
+    hamper_image_url: "/images/hamper/REVE%20SERAPH%20-%20Silver_Black_Hamper.jpeg",
     description: "Quiet luxury, made audible. REVE SERAPH is designed as an object of calm — where soft, celestial artwork meets precision sound. Every detail is intentional, minimal, and expressive, transforming everyday listening into a personal ritual.",
     essence: "Named after the highest form of light and harmony, SERAPH represents clarity, balance, and elevated presence.",
     highlights: [
@@ -182,6 +183,7 @@ export const PRODUCTS = [
     color_hex: "#7BA99C",
     image_url: "/images/airpods/REVE%20SERAPH%20-%20Mint%20Green.png",
     gallery_urls: ["/images/airpods/REVE%20SERAPH%20-%20Mint%20Green.png"],
+    hamper_image_url: "/images/hamper/REVE%20SERAPH%20-%20Mint_Green_Hamper.jpeg",
     description: "Quiet luxury, made audible. REVE SERAPH is designed as an object of calm — where soft, celestial artwork meets precision sound. Every detail is intentional, minimal, and expressive, transforming everyday listening into a personal ritual.",
     essence: "Named after the highest form of light and harmony, SERAPH represents clarity, balance, and elevated presence. Now in a soft, refreshing Mint Green.",
     highlights: [
@@ -215,6 +217,7 @@ export const PRODUCTS = [
     color_hex: "#E8E8E8",
     image_url: "/images/airpods/REVE%20SERAPH%20-%20Silver%20White.png",
     gallery_urls: ["/images/airpods/REVE%20SERAPH%20-%20Silver%20White.png"],
+    hamper_image_url: "/images/hamper/REVE%20SERAPH%20-%20Silver_White_Hamper.jpeg",
     description: "Quiet luxury, made audible. REVE SERAPH is designed as an object of calm — where soft, celestial artwork meets precision sound. Every detail is intentional, minimal, and expressive, transforming everyday listening into a personal ritual.",
     essence: "Named after the highest form of light and harmony, SERAPH represents clarity, balance, and elevated presence. Now in a pristine Silver White.",
     highlights: [
@@ -248,6 +251,7 @@ export const PRODUCTS = [
     color_hex: "#2A2420",
     image_url: "/images/airpods/REVE%20FLORA%20-%20Golden%20Black.png",
     gallery_urls: ["/images/airpods/REVE%20FLORA%20-%20Golden%20Black.png"],
+    hamper_image_url: "/images/hamper/REVE%20FLORA%20-%20Golden_Black_Hamper.jpeg",
     description: "Soft, elegant, and thoughtfully designed — REVE FLORA blends everyday sound with a calm, feminine expression inspired by nature. Minimal floral patterns etched with precision, symbolising growth, grace, and quiet strength — crafted to feel timeless and refined.",
     essence: "Artwork: Minimal floral patterns etched with precision, symbolising growth, grace, and quiet strength.",
     highlights: [
@@ -283,6 +287,7 @@ export const PRODUCTS = [
     color_hex: "#D4B896",
     image_url: "/images/airpods/REVE%20FLORA%20-%20Golden%20Beige.png",
     gallery_urls: ["/images/airpods/REVE%20FLORA%20-%20Golden%20Beige.png"],
+    hamper_image_url: "/images/hamper/REVE%20FLORA%20-%20Golden_Beige_Hamper.jpeg",
     description: "Soft, elegant, and thoughtfully designed — REVE FLORA blends everyday sound with a calm, feminine expression inspired by nature. Minimal floral patterns etched with precision, symbolising growth, grace, and quiet strength — crafted to feel timeless and refined.",
     essence: "Artwork: Minimal floral patterns etched with precision, symbolising growth, grace, and quiet strength.",
     highlights: [
