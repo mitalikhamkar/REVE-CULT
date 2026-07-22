@@ -237,7 +237,44 @@
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }
 }
+/* --- Signature Box — append to the end of index.css --- */
+/* (Your existing .gift-box-idle-float / .gift-box-idle-shadow rules from
+   the previous pass are superseded by these — safe to leave the old ones
+   in place, these simply override with the same class names, or delete
+   the older duplicate block if you'd rather keep the file tidy.) */
 
+.gift-box-idle-float { animation: giftBoxIdleFloatSubtle 6s ease-in-out infinite; }
+@keyframes giftBoxIdleFloatSubtle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.gift-box-idle-shadow { animation: giftBoxIdleShadowBreathe 6s ease-in-out infinite; }
+@keyframes giftBoxIdleShadowBreathe {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+  50% { transform: translateX(-50%) scale(0.92); opacity: 0.65; }
+}
+
+.gift-box-idle-glow { animation: giftBoxIdleGlowPulse 5s ease-in-out infinite; }
+@keyframes giftBoxIdleGlowPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes giftBoxIdleSparkle {
+  0%, 70% { opacity: 0; }
+  78%, 88% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes sparkleTwinkle {
+  0%, 100% { transform: scale(0.85); opacity: 0.7; }
+  50% { transform: scale(1.15); opacity: 1; }
+}
+@keyframes giftBoxRibbonLightSweep {
+  0%, 85%, 100% { transform: translateX(-120%); opacity: 0; }
+  92% { opacity: 1; }
+  95% { transform: translateX(120%); opacity: 0; }
+}
 /* Breathing shadow — shrinks/softens slightly as the box "floats up",
    grows/darkens slightly as it settles back down. */
 .gift-box-idle-shadow { animation: giftBoxIdleShadowBreathe 6s ease-in-out infinite; }

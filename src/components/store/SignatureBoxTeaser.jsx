@@ -5,9 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import GiftBoxVisual from "@/components/store/GiftBoxVisual";
 
+// Voice line: "Every memorable gift begins with a beautiful box.
+// Let's create yours." — plays once, only after the box is tapped.
+const OPEN_VOICE_LINE_SRC = "/audio/signature-box-open.mp3";
+
 export default function SignatureBoxTeaser() {
   const navigate = useNavigate();
-  // "idle" (closed) -> click -> "revealing" (opens, ~1.1s) -> "revealed" (empty)
+  // "idle" (closed) -> click -> "revealing" (opens, ~1.3s) -> "revealed" (empty)
   const [state, setState] = useState("idle");
 
   const handleTap = () => {
@@ -51,6 +55,7 @@ export default function SignatureBoxTeaser() {
               mode={state}
               playing={state === "revealing"}
               onComplete={() => setState("revealed")}
+              audioSrc={OPEN_VOICE_LINE_SRC}
               size="large"
             />
           </button>
