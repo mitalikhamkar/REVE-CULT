@@ -7,42 +7,39 @@ import { motion, AnimatePresence } from "framer-motion";
  *
  * mode="idle"      — Homepage box. Fully closed: lid sits flush on the
  *                     base with a visible seam/rim line, ONE continuous
- *                     satin ribbon wraps lid + seam + base + bow, exactly
- *                     like an unopened wrapped gift. Gentle 2-4px float,
- *                     breathing shadow, soft under-glow, slow light sweep
- *                     across the ribbon, tiny sparkles.
+ *                     satin ribbon crosses lid + seam + base + bow, like
+ *                     an untouched luxury gift. Gentle float, breathing
+ *                     shadow, soft under-glow, ribbon shimmer, occasional
+ *                     sparkle.
  *
- * mode="revealing" — Tap-to-open sequence (~1.3s): box scales up slightly,
- *                     ribbon loosens and fades, lid rotates open from the
- *                     back hinge, warm glow appears inside, sparkles rise.
- *                     If `audioSrc` is provided, the voice line plays once,
- *                     right as the lid begins lifting (never on mount).
- *                     Calls onComplete when finished. Ends open + empty.
+ * mode="revealing" — Tap-to-open sequence (~1.3s): ribbon loosens, lid
+ *                     lifts, soft light appears inside, sparkles emerge.
+ *                     If `audioSrc` is provided, the voice line plays
+ *                     once, right as the lid begins lifting — never on
+ *                     mount. Calls onComplete when finished.
  *
  * mode="revealed"  — Static open + empty box, held after `revealing`.
  *
  * mode="builder"   — Signature Box page live preview. Lid open and
- *                     attached (not floating), pouch fixed inside,
- *                     earbuds cross-fade in/out on selection change.
- *                     No ribbon.
+ *                     attached, pouch fixed inside by default, selected
+ *                     earbuds appear inside on choice. No animation
+ *                     replay — this mode never plays the packing sequence.
  *
- * mode="packing"   — "Add Signature Box to Cart" sequence (~3.6s): pouch
- *                     is already resting in the open box → selected
- *                     earbuds descend into the pouch → tissue paper folds
- *                     in around them → everything settles → lid closes →
- *                     the continuous ribbon wraps back around → bow
- *                     tightens → gold sparkle → soft glow. Calls
- *                     onComplete when finished.
+ * mode="packing"   — Used only inside the fullscreen packing overlay:
+ *                     box appears open + empty → pouch slides in →
+ *                     selected earbuds slide into place → sparkle → lid
+ *                     closes → ribbon wraps → bow ties → soft glow.
+ *                     Calls onComplete when the box sequence itself is
+ *                     done (the overlay adds the "Ready" text after).
  *
- * mode="wrapped"    — Static closed + ribboned box, no floating idle
- *                      animation. Used to hold the box still behind a
- *                      "Your Signature Box is Ready" success message.
+ * mode="wrapped"   — Static closed + ribboned box, no idle float. Held
+ *                     state for anywhere the box needs to sit still and
+ *                     sealed without the ambient motion.
  */
 export default function GiftBoxVisual({
   earbudsImage,
   pouchImage,
   earbudsAlt = "Selected REVE CULT earbuds",
-  giftNote,
   mode = "idle",
   playing = false,
   onComplete,
@@ -73,22 +70,21 @@ export default function GiftBoxVisual({
       // Total ~1.3s
       schedule(1, 100); // box scales up
       schedule(2, 320); // ribbon loosens, lid begins lifting -> audio fires here
-      schedule(3, 520); // lid rotates fully open + inner glow fades in
+      schedule(3, 520); // lid fully open + inner glow fades in
       schedule(4, 800); // sparkles rise
       schedule(5, 1100); // box settles back down
       timers.push(setTimeout(() => onComplete && onComplete(), 1300));
     } else if (isPacking) {
-      // Total ~3.6s — matches the cinematic packing spec
-      schedule(1, 350); // earbuds descend into the pouch
-      schedule(2, 750); // gift note card slides into place
-      schedule(3, 1050); // tissue paper folds in
-      schedule(4, 1450); // everything settles (brief pause)
-      schedule(5, 1750); // lid closes
-      schedule(6, 2350); // ribbon wraps back around
-      schedule(7, 2800); // bow tightens
-      schedule(8, 3050); // gold sparkle
-      schedule(9, 3250); // soft glow
-      timers.push(setTimeout(() => onComplete && onComplete(), 3600));
+      // Total ~2.9s
+      schedule(1, 300); // pouch slides in
+      schedule(2, 650); // earbuds slide into place
+      schedule(3, 950); // small sparkle
+      schedule(4, 1250); // brief settle
+      schedule(5, 1550); // lid closes
+      schedule(6, 2150); // ribbon wraps back around
+      schedule(7, 2550); // bow ties
+      schedule(8, 2800); // soft glow
+      timers.push(setTimeout(() => onComplete && onComplete(), 2900));
     }
     return () => timers.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -103,8 +99,8 @@ export default function GiftBoxVisual({
       audioRef.current = audio;
       audio.currentTime = 0;
       audio.play().catch(() => {
-        /* autoplay-policy safe no-op — tap already counts as a user gesture
-           in the vast majority of browsers, this only guards edge cases */
+        /* autoplay-policy safe no-op — the tap is already the user
+           gesture; this only guards rare edge cases */
       });
     }
   }, [isRevealing, step, audioSrc]);
@@ -116,13 +112,12 @@ export default function GiftBoxVisual({
     (mode === "packing" && step < 5);
 
   const showEmptyGlow = mode === "revealed" || (mode === "revealing" && step >= 3);
-  const showPouch = mode === "builder" || mode === "packing";
-  const showEarbuds = mode === "builder" || (mode === "packing" && step >= 1);
-  const showTissue = mode === "packing" && step >= 3 && step < 5;
+  const showPouch = mode === "builder" || (mode === "packing" && step >= 1);
+  const showEarbuds = mode === "builder" || (mode === "packing" && step >= 2);
 
-  // Ribbon is ONE continuous piece spanning lid + seam + base, independent
-  // of the lid's own rotation — this is what reads as "closed package"
-  // instead of "wrapped lid resting on a bare box."
+  // Ribbon is ONE continuous piece crossing lid + seam + base + bow,
+  // independent of the lid's own rotation — this is what reads as a
+  // sealed package instead of a wrapped lid resting on a bare box.
   const ribbonVisible =
     mode === "idle" ||
     mode === "wrapped" ||
@@ -136,9 +131,9 @@ export default function GiftBoxVisual({
     mode === "wrapped" ||
     (mode === "revealing" && step >= 3) ||
     mode === "revealed" ||
-    (mode === "packing" && step >= 9);
+    (mode === "packing" && step >= 8);
   const sparkleActive =
-    (mode === "revealing" && step >= 4 && step < 5) || (mode === "packing" && step >= 8);
+    (mode === "revealing" && step >= 4 && step < 5) || (mode === "packing" && step >= 3 && step < 4);
 
   const lidRotate = lidOpen ? -112 : 0;
   const boxScale = mode === "revealing" && step >= 1 && step < 5 ? 1.035 : 1;
@@ -244,90 +239,47 @@ export default function GiftBoxVisual({
             </motion.div>
           )}
 
-          {/* Pouch — fixed in place, does not move between selections */}
-          {showPouch && pouchImage && (
-            <div className="absolute inset-x-0 bottom-[14%] flex items-end justify-center gap-3 sm:gap-4">
-              <img
-                src={pouchImage}
-                alt="REVE CULT premium carry pouch"
-                draggable={false}
-                className="w-11 h-11 sm:w-16 sm:h-16 object-contain drop-shadow-md"
-              />
-
-              <AnimatePresence mode="popLayout">
-                {showEarbuds && earbudsImage && (
-                  <motion.img
-                    key={mode === "builder" ? earbudsImage : "earbuds-packing"}
-                    src={earbudsImage}
-                    alt={earbudsAlt}
-                    draggable={false}
-                    className="w-14 h-14 sm:w-20 sm:h-20 object-contain drop-shadow-md"
-                    initial={
-                      mode === "packing"
-                        ? { opacity: 0, y: -30, scale: 0.85 }
-                        : { opacity: 0, x: 34, scale: 0.8 }
-                    }
-                    animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
-                    exit={
-                      mode === "packing"
-                        ? { opacity: 0, y: -30, scale: 0.85 }
-                        : { opacity: 0, x: -34, scale: 0.8 }
-                    }
-                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                  />
-                )}
-              </AnimatePresence>
-            </div>
-          )}
-
-          {/* Tissue paper folding in around the gift during packing */}
-          <AnimatePresence>
-            {showTissue && (
-              <>
-                <motion.div
-                  key="tissue-left"
-                  className="absolute left-[2%] bottom-[8%] w-[46%] h-[40%] origin-bottom-left pointer-events-none"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%)",
-                    clipPath: "polygon(0% 100%, 100% 60%, 40% 0%, 0% 30%)",
-                  }}
-                  initial={{ opacity: 0, rotate: -30, x: -14 }}
-                  animate={{ opacity: 0.9, rotate: 0, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+          {/* Pouch + earbuds */}
+          <div className="absolute inset-x-0 bottom-[14%] flex items-end justify-center gap-3 sm:gap-4">
+            <AnimatePresence>
+              {showPouch && pouchImage && (
+                <motion.img
+                  key="pouch"
+                  src={pouchImage}
+                  alt="REVE CULT premium carry pouch"
+                  draggable={false}
+                  className="w-11 h-11 sm:w-16 sm:h-16 object-contain drop-shadow-md"
+                  initial={mode === "packing" ? { opacity: 0, y: -20, scale: 0.85 } : false}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 />
-                <motion.div
-                  key="tissue-right"
-                  className="absolute right-[2%] bottom-[8%] w-[46%] h-[40%] origin-bottom-right pointer-events-none"
-                  style={{
-                    background: "linear-gradient(225deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%)",
-                    clipPath: "polygon(100% 100%, 0% 60%, 60% 0%, 100% 30%)",
-                  }}
-                  initial={{ opacity: 0, rotate: 30, x: 14 }}
-                  animate={{ opacity: 0.9, rotate: 0, x: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease: "easeOut", delay: 0.05 }}
-                />
-              </>
-            )}
-          </AnimatePresence>
+              )}
+            </AnimatePresence>
 
-          {/* Gift note card sliding into place during packing */}
-          <AnimatePresence>
-            {mode === "packing" && step >= 2 && giftNote && (
-              <motion.div
-                key="note"
-                className="absolute inset-x-0 bottom-[30%] flex justify-center z-10"
-                initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-              >
-                <div className="px-3 py-1 rounded-lg text-[9px] sm:text-[10px] font-medium text-blush bg-white shadow-sm border border-blush/15 max-w-[80%] truncate">
-                  ✦ {giftNote}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            <AnimatePresence mode="popLayout">
+              {showEarbuds && earbudsImage && (
+                <motion.img
+                  key={mode === "builder" ? earbudsImage : "earbuds-packing"}
+                  src={earbudsImage}
+                  alt={earbudsAlt}
+                  draggable={false}
+                  className="w-14 h-14 sm:w-20 sm:h-20 object-contain drop-shadow-md"
+                  initial={
+                    mode === "packing"
+                      ? { opacity: 0, y: -20, scale: 0.85 }
+                      : { opacity: 0, x: 34, scale: 0.8 }
+                  }
+                  animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+                  exit={
+                    mode === "packing"
+                      ? { opacity: 0, y: -20, scale: 0.85 }
+                      : { opacity: 0, x: -34, scale: 0.8 }
+                  }
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                />
+              )}
+            </AnimatePresence>
+          </div>
 
           <p className="absolute bottom-1.5 left-1/2 -translate-x-1/2 text-[8px] sm:text-[9px] tracking-[0.3em] font-heading text-blush/60">
             REVE CULT
@@ -393,10 +345,8 @@ export default function GiftBoxVisual({
           />
         )}
 
-        {/* Continuous satin ribbon — a single wrap across lid + seam +
-            base + bow, independent of the lid's own rotation, which is
-            what makes the idle box read as one sealed package instead of
-            a wrapped lid resting on a bare box. */}
+        {/* Continuous satin ribbon — one wrap crossing lid + seam + base +
+            bow, independent of the lid's own rotation. */}
         <AnimatePresence>
           {ribbonVisible && (
             <motion.div

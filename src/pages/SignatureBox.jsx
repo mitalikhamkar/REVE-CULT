@@ -1,21 +1,22 @@
 // SignatureBox.jsx
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
 import GiftBoxVisual from "@/components/store/GiftBoxVisual";
+import SignatureBoxPackingOverlay from "@/components/store/SignatureBoxPackingOverlay";
 
 const EARBUD_OPTIONS = PRODUCTS.filter((p) => p.category.toLowerCase().includes("earbuds"));
 const CARRY_POUCH = PRODUCTS.find((p) => p.id === "p2");
 
-const GIFT_FOR_OPTIONS = ["Mother", "Sister", "Friend", "Partner", "Family", "Myself"];
+const GIFT_FOR_OPTIONS = ["Mother", "Father", "Friend", "Sister", "Brother", "Partner", "Myself", "Other"];
 
 const MESSAGE_SUGGESTIONS = [
-  "Hope you love this gift!",
-  "Made with love.",
-  "Thinking of you.",
+  "Wishing you endless music.",
+  "Made especially for you.",
+  "Hope you love this.",
 ];
 
 export default function SignatureBox() {
@@ -25,8 +26,7 @@ export default function SignatureBox() {
   const [selectedId, setSelectedId] = useState(EARBUD_OPTIONS[0]?.id);
   const [giftFor, setGiftFor] = useState(null);
   const [message, setMessage] = useState("");
-  // idle -> packing -> success -> (navigate to cart)
-  const [phase, setPhase] = useState("idle");
+  const [showPacking, setShowPacking] = useState(false);
 
   const selectedEarbuds = useMemo(
     () => EARBUD_OPTIONS.find((p) => p.id === selectedId) || EARBUD_OPTIONS[0],
@@ -35,8 +35,7 @@ export default function SignatureBox() {
 
   const totalPrice = (selectedEarbuds?.price || 0) + (CARRY_POUCH?.price || 0);
 
-  useEffect(() => {
-    if (phase !== "success") return;
+  const handlePackingComplete = () => {
     const hamperImage = selectedEarbuds?.hamper_image_url || selectedEarbuds?.image_url;
     addToCart(
       {
@@ -52,13 +51,8 @@ export default function SignatureBox() {
       },
       1
     );
-    const t = setTimeout(() => navigate("/cart"), 1200);
-    return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase]);
-
-  const isPacking = phase === "packing";
-  const boxMode = phase === "success" ? "wrapped" : isPacking ? "packing" : "builder";
+    navigate("/cart");
+  };
 
   return (
     <section className="bg-cream min-h-screen">
@@ -72,7 +66,7 @@ export default function SignatureBox() {
         </div>
 
         <div className="grid lg:grid-cols-[45%_55%] gap-10 lg:gap-14 items-start">
-          {/* LEFT — box visual */}
+          {/* LEFT — live preview only; the packing animation never plays here */}
           <div className="lg:sticky lg:top-24">
             <div
               className="rounded-[32px] border border-white/70 p-8 sm:p-10 lg:p-12 flex flex-col items-center justify-center min-h-[380px] sm:min-h-[440px]"
@@ -83,40 +77,15 @@ export default function SignatureBox() {
               }}
             >
               <GiftBoxVisual
-                mode={boxMode}
-                playing={isPacking}
-                onComplete={() => setPhase("success")}
+                mode="builder"
                 earbudsImage={selectedEarbuds?.image_url}
                 earbudsAlt={selectedEarbuds?.name}
                 pouchImage={CARRY_POUCH?.image_url}
-                giftNote={message.trim()}
                 size="large"
               />
-
-              <AnimatePresence mode="wait">
-                {phase === "idle" && (
-                  <motion.p
-                    key="preview-label"
-                    className="text-xs text-muted-foreground mt-6 text-center"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                  >
-                    Live preview — updates as you choose
-                  </motion.p>
-                )}
-                {phase === "success" && (
-                  <motion.p
-                    key="success-label"
-                    className="text-sm sm:text-base font-heading font-light text-blush mt-6 text-center"
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.45, ease: "easeOut" }}
-                  >
-                    Your Signature Box is Ready ✨
-                  </motion.p>
-                )}
-              </AnimatePresence>
+              <p className="text-xs text-muted-foreground mt-6 text-center">
+                Live preview — updates as you choose
+              </p>
             </div>
           </div>
 
@@ -132,9 +101,8 @@ export default function SignatureBox() {
                     <button
                       key={p.id}
                       onClick={() => setSelectedId(p.id)}
-                      disabled={phase !== "idle"}
                       className={
-                        "flex items-center gap-4 text-left rounded-2xl border bg-white p-3 sm:p-4 transition-all duration-300 ease-out disabled:cursor-not-allowed " +
+                        "flex items-center gap-4 text-left rounded-2xl border bg-white p-3 sm:p-4 transition-all duration-300 ease-out " +
                         (isSelected ? "border-blush scale-[1.01]" : "border-border hover:border-blush/40")
                       }
                       style={{
@@ -156,6 +124,7 @@ export default function SignatureBox() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-foreground leading-snug line-clamp-2">{p.name}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{p.color}</p>
                         <p className="text-sm font-heading font-semibold text-blush mt-1">₹{p.price}</p>
                       </div>
                     </button>
@@ -174,9 +143,8 @@ export default function SignatureBox() {
                     <button
                       key={label}
                       onClick={() => setGiftFor(isSelected ? null : label)}
-                      disabled={phase !== "idle"}
                       className={
-                        "px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 disabled:cursor-not-allowed " +
+                        "px-4 py-2 rounded-full text-sm font-medium border transition-all duration-300 " +
                         (isSelected
                           ? "bg-blush text-white border-blush scale-[1.03] shadow-[0_8px_18px_-10px_hsl(var(--blush)/60%)]"
                           : "bg-white text-foreground border-border hover:border-blush/40")
@@ -189,24 +157,22 @@ export default function SignatureBox() {
               </div>
             </div>
 
-            {/* Personal Message */}
+            {/* Personal Note */}
             <div>
-              <h2 className="text-xl font-heading font-light mb-4">Personal Message</h2>
+              <h2 className="text-xl font-heading font-light mb-4">Personal Note</h2>
               <textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                disabled={phase !== "idle"}
                 placeholder="Write your message..."
                 rows={3}
-                className="w-full rounded-2xl border border-border bg-white p-4 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-blush/40 resize-none disabled:opacity-70"
+                className="w-full rounded-2xl border border-border bg-white p-4 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-blush/40 resize-none"
               />
               <div className="flex flex-wrap gap-2 mt-3">
                 {MESSAGE_SUGGESTIONS.map((s) => (
                   <button
                     key={s}
                     onClick={() => setMessage(s)}
-                    disabled={phase !== "idle"}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium bg-accent/60 text-foreground border border-border/60 hover:border-blush/40 hover:bg-white transition-all duration-200 disabled:cursor-not-allowed"
+                    className="px-3 py-1.5 rounded-full text-xs font-medium bg-accent/60 text-foreground border border-border/60 hover:border-blush/40 hover:bg-white transition-all duration-200"
                   >
                     {s}
                   </button>
@@ -258,9 +224,8 @@ export default function SignatureBox() {
                 Continue Shopping
               </Link>
               <button
-                onClick={() => setPhase("packing")}
-                disabled={phase !== "idle"}
-                className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blush text-white rounded-full text-sm font-medium hover:bg-blush/90 transition-all hover:scale-[1.01] min-h-[48px] disabled:opacity-70 disabled:cursor-default"
+                onClick={() => setShowPacking(true)}
+                className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blush text-white rounded-full text-sm font-medium hover:bg-blush/90 transition-all hover:scale-[1.01] min-h-[48px]"
               >
                 <ShoppingBag size={16} />
                 Add Signature Box to Cart
@@ -269,6 +234,17 @@ export default function SignatureBox() {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showPacking && (
+          <SignatureBoxPackingOverlay
+            earbudsImage={selectedEarbuds?.image_url}
+            earbudsAlt={selectedEarbuds?.name}
+            pouchImage={CARRY_POUCH?.image_url}
+            onComplete={handlePackingComplete}
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 }
