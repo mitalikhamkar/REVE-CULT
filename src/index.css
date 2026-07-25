@@ -315,7 +315,23 @@
 .hero-gallery-in-side { animation: heroGalleryInSide 0.8s ease-in-out forwards; }
 .hero-gallery-out-side-reverse { animation: heroGalleryOutSideReverse 0.8s ease-in-out forwards; }
 .hero-gallery-in-side-reverse { animation: heroGalleryInSideReverse 0.8s ease-in-out forwards; }
-
+/* --- Quick View — append to the end of index.css --- */
+/* Extremely subtle, slow background breathe behind the Quick View modal:
+   soft pink -> cream -> very light peach -> back. Kept nearly invisible. */
+.quickview-breathing-bg {
+  background: linear-gradient(
+    160deg,
+    hsl(var(--blush) / 10%) 0%,
+    hsl(var(--cream)) 45%,
+    hsl(24 55% 92% / 60%) 100%
+  );
+  background-size: 200% 200%;
+  animation: quickviewBgBreathe 14s ease-in-out infinite;
+}
+@keyframes quickviewBgBreathe {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
 /* Subtle continuous float so the gallery feels alive at rest. */
 @keyframes heroGalleryFloat {
   0%, 100% { transform: translateY(0); }
