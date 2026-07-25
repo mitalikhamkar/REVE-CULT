@@ -387,3 +387,47 @@
   animation: aiWaveBounce 1s ease-in-out infinite;
   transform-origin: bottom;
 }
+/* =========================================================
+   NEW — Premium Shopping Features additions
+   Append everything below to the END of your existing index.css.
+   Nothing here overrides or removes any existing rule.
+   ========================================================= */
+
+/* Compare toggle — small "pop" when a card is added/removed from Compare */
+@keyframes comparePulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.compare-pulse { animation: comparePulse 0.35s ease-out; }
+
+/* Wishlist heart — small "pop" on toggle */
+@keyframes wishlistPop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.wishlist-pop { animation: wishlistPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+/* Floating Compare bar entrance */
+@keyframes compareBarSlideUp {
+  from { opacity: 0; transform: translate(-50%, 20px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+.compare-bar-slide-up { animation: compareBarSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* Add to Cart toast entrance / exit (CompareBar and AddToCartToast use
+   framer-motion for their actual enter/exit, which is already a project
+   dependency — these classes are kept as a plain-CSS fallback if you
+   choose to build either without framer-motion). */
+@keyframes toastSlideUp {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.toast-slide-up { animation: toastSlideUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+@keyframes toastFadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(8px); }
+}
+.toast-fade-out { animation: toastFadeOut 0.3s ease-in forwards; }

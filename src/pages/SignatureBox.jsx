@@ -1,9 +1,9 @@
 // SignatureBox.jsx
-import React, { useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useMemo, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
-import { PRODUCTS } from "@/data/products";
+import { PRODUCTS, getProductBySlug } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
 import GiftBoxVisual from "@/components/store/GiftBoxVisual";
 import SignatureBoxPackingOverlay from "@/components/store/SignatureBoxPackingOverlay";
@@ -22,11 +22,31 @@ const MESSAGE_SUGGESTIONS = [
 export default function SignatureBox() {
   const { addToCart } = useStore();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
-  const [selectedId, setSelectedId] = useState(EARBUD_OPTIONS[0]?.id);
+  // Pre-select from ?earbud=<slug> (set by the "Gift this Hamper" CTA in
+  // Quick View) — falls back to the first earbud option when absent or
+  // when the slug doesn't match a known product.
+  const earbudParam = searchParams.get("earbud");
+  const initialEarbud = getProductBySlug(earbudParam);
+  const initialId =
+    initialEarbud && EARBUD_OPTIONS.some((p) => p.id === initialEarbud.id)
+      ? initialEarbud.id
+      : EARBUD_OPTIONS[0]?.id;
+
+  const [selectedId, setSelectedId] = useState(initialId);
   const [giftFor, setGiftFor] = useState(null);
   const [message, setMessage] = useState("");
   const [showPacking, setShowPacking] = useState(false);
+
+  // If the query param changes after mount (e.g. navigating here again
+  // from a different Quick View), sync the selection to match.
+  useEffect(() => {
+    if (initialEarbud && EARBUD_OPTIONS.some((p) => p.id === initialEarbud.id)) {
+      setSelectedId(initialEarbud.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [earbudParam]);
 
   const selectedEarbuds = useMemo(
     () => EARBUD_OPTIONS.find((p) => p.id === selectedId) || EARBUD_OPTIONS[0],

@@ -7,6 +7,11 @@ import ProductCard from "@/components/store/ProductCard";
 import FeaturedProductCard from "@/components/store/FeaturedProductCard";
 import FindMyReveMatch from "@/components/store/FindMyReveMatch";
 import VisualSearch from "@/components/store/VisualSearch";
+// NEW — premium shopping features
+import CompareBar from "@/components/store/CompareBar";
+import RecentlyViewedStrip from "@/components/store/RecentlyViewedStrip";
+import WhyShopStrip from "@/components/store/WhyShopStrip";
+import AddToCartToast from "@/components/store/AddToCartToast";
 
 // Fixed catalog order, exactly as specified — pulled from the existing
 // product data by slug. Nothing about price/description/images is invented
@@ -307,8 +312,22 @@ export default function Shop() {
         </AnimatePresence>
       )}
 
+      {/* NEW — Recently Viewed strip */}
+      <RecentlyViewedStrip />
+
+      {/* NEW — trust strip, sits above the global footer */}
+      <WhyShopStrip />
+
       {showQuiz && <FindMyReveMatch onClose={() => setShowQuiz(false)} />}
       {showVisual && <VisualSearch onClose={() => setShowVisual(false)} />}
+
+      {/* NEW — floating compare bar + add-to-cart toast. Both are
+          self-contained and read straight from StoreContext, so mounting
+          them here is enough for the Shop page. For the toast to also
+          appear from the cart, product detail, or Signature Box pages,
+          move <AddToCartToast /> up into your root layout instead. */}
+      <CompareBar />
+      <AddToCartToast />
     </div>
   );
 }

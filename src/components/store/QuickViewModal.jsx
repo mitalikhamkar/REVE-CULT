@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
+// NEW — Complete Your Look, Estimated Delivery, Share, Gift This Product
+import QuickViewExtras from "@/components/store/QuickViewExtras";
 
 // Timing constants for the phase sequence below. Kept in one place so the
 // scan duration here always matches the CSS `visualScanSweep` animation
@@ -554,6 +556,13 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                   >
                     View Full Details <ArrowRight size={14} />
                   </Link>
+                </motion.div>
+
+                {/* NEW — Complete Your Look, Estimated Delivery, Share,
+                    Gift This Product. Fades in with the rest of this
+                    column since it's inside the same staggered variants. */}
+                <motion.div variants={itemVariants}>
+                  <QuickViewExtras product={activeProduct} onNavigate={onClose} />
                 </motion.div>
               </motion.div>
             )}
