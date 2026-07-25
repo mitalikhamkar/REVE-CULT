@@ -4,22 +4,20 @@ import { Sparkles, ScanLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getProductBySlug } from "@/data/products";
 import ProductCard from "@/components/store/ProductCard";
+import FeaturedProductCard from "@/components/store/FeaturedProductCard";
 import FindMyReveMatch from "@/components/store/FindMyReveMatch";
 import VisualSearch from "@/components/store/VisualSearch";
 
 // Fixed catalog order, exactly as specified — pulled from the existing
 // product data by slug. Nothing about price/description/images is invented
 // or changed here; this only decides display order.
-const ALL_ORDER = [
+const EARBUD_SLUGS = [
   "reve-flora-golden-black",
   "reve-flora-golden-beige",
   "reve-seraph-mint-green",
   "reve-seraph-silver-black",
   "reve-seraph-silver-white",
-  "reve-cult-tshirt",
-  "mini-luxe-case-bag",
 ];
-const EARBUD_SLUGS = ALL_ORDER.slice(0, 5);
 const APPAREL_SLUGS = ["reve-cult-tshirt"];
 const ACCESSORY_SLUGS = ["mini-luxe-case-bag"];
 
@@ -46,22 +44,22 @@ const cardVariants = {
   hidden: { opacity: 0, y: 22 },
   show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] } },
 };
-const bannerVariants = {
-  hidden: { opacity: 0, y: 16 },
+const revealVariants = {
+  hidden: { opacity: 0, y: 20 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
 
 function EditorialBanner() {
   return (
     <motion.div
-      className="relative overflow-hidden rounded-[28px] px-8 py-12 sm:py-14 text-center my-4"
+      className="relative overflow-hidden rounded-[28px] px-8 py-12 sm:py-14 text-center"
       style={{
         background: "linear-gradient(150deg, hsl(var(--blush) / 12%) 0%, hsl(var(--cream)) 55%, hsl(var(--gold) / 10%) 100%)",
       }}
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, amount: 0.5 }}
-      variants={bannerVariants}
+      variants={revealVariants}
     >
       <div
         className="absolute -top-10 -left-10 w-52 h-52 rounded-full pointer-events-none"
@@ -81,7 +79,7 @@ function EditorialBanner() {
   );
 }
 
-// A full row of up to 3 cards.
+// A grid row of up to 3 cards — used only for the earbuds collection.
 function ProductRow({ products }) {
   return (
     <motion.div
@@ -100,9 +98,8 @@ function ProductRow({ products }) {
   );
 }
 
-// A leftover row of 1–2 cards, centered and given a little extra room so it
-// reads as an intentional closing moment rather than a stray, left-aligned
-// card trailing off a grid.
+// A leftover row of 1–2 earbud cards, centered so it doesn't trail off
+// left-aligned when the count doesn't divide evenly into 3.
 function LeftoverRow({ products }) {
   const widthClass = products.length === 1 ? "max-w-xs sm:max-w-sm" : "max-w-xl";
   return (
@@ -119,6 +116,33 @@ function LeftoverRow({ products }) {
         </motion.div>
       ))}
     </motion.div>
+  );
+}
+
+function FeaturedSection({ eyebrow, title, product }) {
+  return (
+    <div>
+      {(eyebrow || title) && (
+        <motion.div
+          className="mb-6"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.5 }}
+          variants={revealVariants}
+        >
+          {eyebrow && <p className="text-xs uppercase tracking-[0.25em] text-gold mb-2">{eyebrow}</p>}
+          {title && <h2 className="text-2xl lg:text-3xl font-heading font-light tracking-tight">{title}</h2>}
+        </motion.div>
+      )}
+      <motion.div
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.25 }}
+        variants={revealVariants}
+      >
+        <FeaturedProductCard product={product} />
+      </motion.div>
+    </div>
   );
 }
 
@@ -142,15 +166,12 @@ export default function Shop() {
       setActiveCollection("accessories");
   }, [categoryParam]);
 
-  const orderedSlugs =
-    activeCollection === "all"
-      ? ALL_ORDER
-      : COLLECTIONS.find((c) => c.key === activeCollection)?.slugs || ALL_ORDER;
-
-  const ordered = useMemo(() => bySlug(orderedSlugs), [orderedSlugs]);
+  const earbuds = useMemo(() => bySlug(EARBUD_SLUGS), []);
+  const apparel = useMemo(() => bySlug(APPAREL_SLUGS), []);
+  const accessories = useMemo(() => bySlug(ACCESSORY_SLUGS), []);
 
   // Preserve the existing "?q=" search and "?filter=new|bestsellers" deep
-  // links by narrowing within the fixed catalog order.
+  // links by narrowing within the fixed catalog.
   const matches = (p) => {
     if (query) {
       const hit =
@@ -165,15 +186,28 @@ export default function Shop() {
     return true;
   };
 
-  const visible = ordered.filter(matches);
-  const rows = chunk(visible, 3);
-  const fullRows = rows.filter((r) => r.length === 3);
-  const leftover = rows.find((r) => r.length < 3) || [];
+  const visibleEarbuds = earbuds.filter(matches);
+  const visibleApparel = apparel.filter(matches);
+  const visibleAccessories = accessories.filter(matches);
 
-  // Only break up the page with the editorial banner in the unfiltered,
-  // full-catalog view — showing a single filtered category (e.g. just the
-  // T-shirt) doesn't need a mid-page divider.
-  const showBanner = activeCollection === "all" && !query && !filterParam && fullRows.length > 0 && leftover.length > 0;
+  const showEarbuds = (activeCollection === "all" || activeCollection === "earbuds") && visibleEarbuds.length > 0;
+  const showApparel = (activeCollection === "all" || activeCollection === "apparel") && visibleApparel.length > 0;
+  const showAccessories =
+    (activeCollection === "all" || activeCollection === "accessories") && visibleAccessories.length > 0;
+
+  const totalVisible =
+    (showEarbuds ? visibleEarbuds.length : 0) +
+    (showApparel ? visibleApparel.length : 0) +
+    (showAccessories ? visibleAccessories.length : 0);
+
+  const earbudRows = chunk(visibleEarbuds, 3);
+  const earbudFullRows = earbudRows.filter((r) => r.length === 3);
+  const earbudLeftover = earbudRows.find((r) => r.length < 3) || [];
+
+  // Only insert the editorial banner in the unfiltered, full-catalog view,
+  // between the earbuds collection and the Apparel feature — a filtered
+  // single-category view doesn't need a mid-page divider.
+  const showBanner = activeCollection === "all" && !query && !filterParam && showEarbuds && showApparel;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -186,7 +220,7 @@ export default function Shop() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl lg:text-4xl font-heading font-light">Shop All</h1>
-          <p className="text-sm text-muted-foreground mt-1">{visible.length} products</p>
+          <p className="text-sm text-muted-foreground mt-1">{totalVisible} products</p>
         </div>
         <div className="flex gap-2">
           <button
@@ -231,7 +265,7 @@ export default function Shop() {
         ))}
       </div>
 
-      {visible.length === 0 ? (
+      {totalVisible === 0 ? (
         <div className="text-center py-20">
           <p className="text-sm text-muted-foreground mb-4">No products match your search.</p>
           <button onClick={() => setActiveCollection("all")} className="text-sm font-medium text-blush hover:underline">
@@ -246,15 +280,29 @@ export default function Shop() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
-            className="space-y-8 lg:space-y-10"
+            className="space-y-16 lg:space-y-20"
           >
-            {fullRows.map((row, i) => (
-              <ProductRow key={i} products={row} />
-            ))}
+            {/* Earbuds — collection grid */}
+            {showEarbuds && (
+              <div className="space-y-6 lg:space-y-8">
+                {earbudFullRows.map((row, i) => (
+                  <ProductRow key={i} products={row} />
+                ))}
+                {earbudLeftover.length > 0 && <LeftoverRow products={earbudLeftover} />}
+              </div>
+            )}
 
             {showBanner && <EditorialBanner />}
 
-            {leftover.length > 0 && <LeftoverRow products={leftover} />}
+            {/* Apparel — large editorial feature */}
+            {showApparel && (
+              <FeaturedSection eyebrow="Collection" title="Lifestyle Apparel" product={visibleApparel[0]} />
+            )}
+
+            {/* Accessories — large editorial feature */}
+            {showAccessories && (
+              <FeaturedSection eyebrow="Collection" title="Accessories" product={visibleAccessories[0]} />
+            )}
           </motion.div>
         </AnimatePresence>
       )}
