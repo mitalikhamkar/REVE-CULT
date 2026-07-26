@@ -10,7 +10,6 @@ import RitualLoader from "@/components/store/RitualLoader";
 import ProductShowcase from "@/components/store/ProductShowcase";
 import CategoryShowcase from "@/components/store/CategoryShowcase";
 import HeroGallery from "@/components/store/HeroGallery";
-import SignatureBoxTeaser from "@/components/store/SignatureBoxTeaser";
 
 const TESTIMONIALS = [
   { name: "Ananya", text: "The Mint Green SERAPH earbuds are honestly the prettiest tech I own. Sound is crystal clear and they look gorgeous.", role: "College Student" },
@@ -134,23 +133,19 @@ export default function Home() {
               boxShadow: "0 18px 42px -26px rgba(196,120,120,0.30)",
             }}
           >
-            {/* Base shadow lifts further on hover */}
             <div
               className="absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out pointer-events-none"
               style={{ boxShadow: "0 32px 60px -24px rgba(196,120,120,0.42)" }}
             />
-            {/* Faint watermark icon — editorial touch */}
             <Sparkles
               size={200}
               strokeWidth={0.75}
               className="absolute -right-8 -bottom-10 text-blush opacity-[0.07] pointer-events-none transition-transform duration-700 ease-out group-hover:rotate-6 group-hover:scale-105"
             />
-            {/* Glow blob */}
             <div
               className="absolute -top-16 -right-12 w-72 h-72 rounded-full pointer-events-none transition-all duration-700 ease-out group-hover:scale-125"
               style={{ background: "radial-gradient(circle, hsl(var(--blush) / 26%) 0%, transparent 70%)" }}
             />
-            {/* Soft glow ring on hover */}
             <div
               className="absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out pointer-events-none"
               style={{ boxShadow: "inset 0 0 0 1px hsl(var(--blush) / 45%)" }}
@@ -188,23 +183,19 @@ export default function Home() {
               boxShadow: "0 18px 42px -26px rgba(120,140,110,0.28)",
             }}
           >
-            {/* Base shadow lifts further on hover */}
             <div
               className="absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out pointer-events-none"
               style={{ boxShadow: "0 32px 60px -24px rgba(120,140,110,0.40)" }}
             />
-            {/* Faint watermark icon — editorial touch */}
             <ScanLine
               size={200}
               strokeWidth={0.75}
               className="absolute -left-8 -bottom-10 text-sage opacity-[0.07] pointer-events-none transition-transform duration-700 ease-out group-hover:-rotate-6 group-hover:scale-105"
             />
-            {/* Glow blob */}
             <div
               className="absolute -bottom-16 -left-12 w-72 h-72 rounded-full pointer-events-none transition-all duration-700 ease-out group-hover:scale-125"
               style={{ background: "radial-gradient(circle, hsl(var(--sage) / 24%) 0%, transparent 70%)" }}
             />
-            {/* Soft glow ring on hover */}
             <div
               className="absolute inset-0 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out pointer-events-none"
               style={{ boxShadow: "inset 0 0 0 1px hsl(var(--sage) / 40%)" }}
@@ -233,9 +224,6 @@ export default function Home() {
           </button>
         </div>
       </section>
-
-      {/* Create Your Signature Box — premium gifting preview */}
-      <SignatureBoxTeaser />
 
       {/* New Arrivals */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

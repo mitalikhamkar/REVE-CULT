@@ -23,34 +23,27 @@ import {
 } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
-// NEW — Complete Your Look, Estimated Delivery, Share, Gift This Product
 import QuickViewExtras from "@/components/store/QuickViewExtras";
 
-// Timing constants for the phase sequence below. Kept in one place so the
-// scan duration here always matches the CSS `visualScanSweep` animation
-// (already defined in index.css for the Scan & Match feature — reused here
-// rather than duplicated) and so the fly-to-cart timing matches its own
-// transition duration.
-const SPOTLIGHT_DELAY = 450; // spotlight fades in shortly after the product settles center-stage
-const SCAN_DURATION = 1600; // matches index.css visualScanSweep keyframe duration
-const SUCCESS_HOLD = 800; // how long the "Added to Cart" success state is shown
+// Used to add the carry pouch as the 3rd gallery slide for hamper
+// products — the same physical pouch ships inside every hamper.
+const CARRY_POUCH = PRODUCTS.find((p) => p.id === "p2");
+
+const SPOTLIGHT_DELAY = 450;
+const SCAN_DURATION = 1600;
+const SUCCESS_HOLD = 800;
 const FLY_DURATION = 600;
 const CLOSE_DURATION = 500;
 
-// Reads the glow tone from the product's EXISTING `color` field only — no
-// new specs, just a presentational mapping so the spotlight behind the
-// product visually matches what's already in the catalog data.
 function getGlowColor(colorName = "") {
   const c = colorName.toLowerCase();
-  if (c.includes("gold")) return "38 55% 68%"; // warm champagne
-  if (c.includes("mint")) return "150 30% 65%"; // soft mint
-  if (c.includes("silver") || c.includes("white") || c.includes("beige")) return "38 20% 92%"; // pearl white
-  if (c.includes("black")) return "220 8% 45%"; // charcoal grey
-  return "13 49% 71%"; // brand blush default
+  if (c.includes("gold")) return "38 55% 68%";
+  if (c.includes("mint")) return "150 30% 65%";
+  if (c.includes("silver") || c.includes("white") || c.includes("beige")) return "38 20% 92%";
+  if (c.includes("black")) return "220 8% 45%";
+  return "13 49% 71%";
 }
 
-// Picks a small icon for a feature chip based on keywords already present in
-// the product's own highlight text — purely presentational, adds no data.
 function getHighlightIcon(text = "") {
   const t = text.toLowerCase();
   if (t.includes("noise") || t.includes("anc")) return Volume2;
@@ -61,9 +54,6 @@ function getHighlightIcon(text = "") {
   return Sparkles;
 }
 
-// Staggered reveal for the right-hand info column — 60-80ms between
-// sections, each fading upward, per the requested order: name -> rating ->
-// price -> description -> highlights -> colors -> quantity -> actions.
 const columnVariants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } },
@@ -73,23 +63,12 @@ const itemVariants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.42, ease: [0.22, 1, 0.36, 1] } },
 };
 
-/**
- * Premium Quick View modal. Reuses the existing product catalog and
- * StoreContext (cart/wishlist) — no duplicated product data, no new
- * routing. Rendered via a portal so it always sits above the page
- * regardless of any hover transforms on the card that opened it.
- *
- * `originPoint` (optional {x, y} viewport coordinates of the click that
- * opened this modal, passed from ProductCard) drives the "grows from where
- * you clicked" opening/closing motion. If it isn't provided, the modal
- * falls back to a plain centered scale-fade.
- */
 export default function QuickViewModal({ product, onClose, originPoint }) {
   const { addToCart, toggleWishlist, isInWishlist } = useStore();
   const [activeSlug, setActiveSlug] = useState(product.slug);
   const [quantity, setQuantity] = useState(1);
   const [imgIndex, setImgIndex] = useState(0);
-  const [phase, setPhase] = useState("entering"); // entering -> spotlight -> scanning -> revealed -> success -> flying -> closing
+  const [phase, setPhase] = useState("entering");
   const [reflection, setReflection] = useState({ x: 50, y: 30 });
   const imageStageRef = useRef(null);
   const timers = useRef([]);
@@ -98,17 +77,19 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
   const siblings = PRODUCTS.filter((p) => p.collection === product.collection && p.color);
   const wishlisted = isInWishlist(activeProduct.id);
 
-  const gallery =
-    activeProduct.gallery_urls && activeProduct.gallery_urls.length > 0
-      ? activeProduct.gallery_urls
-      : [activeProduct.image_url];
+  // Hamper products lead with the hamper (box) photo, then the earbuds,
+  // then the shared carry pouch — a small manual gallery, no auto-rotate.
+  // Non-hamper products (T-shirt, standalone pouch) keep their existing
+  // gallery_urls behaviour untouched.
+  const gallery = activeProduct.is_hamper
+    ? [activeProduct.hamper_image_url, activeProduct.image_url, CARRY_POUCH?.image_url].filter(Boolean)
+    : activeProduct.gallery_urls && activeProduct.gallery_urls.length > 0
+    ? activeProduct.gallery_urls
+    : [activeProduct.image_url];
   const currentImage = gallery[Math.min(imgIndex, gallery.length - 1)];
   const hasRating = (activeProduct.review_count || 0) > 0;
   const glowHsl = getGlowColor(activeProduct.color);
 
-  // Offset (in px) from screen center to the point that was clicked, and a
-  // small starting scale — this is what makes the modal feel like it grew
-  // out of the exact spot the person tapped, rather than just fading in.
   const flip = useMemo(() => {
     if (!originPoint) return { x: 0, y: 24, scale: 0.94 };
     const cx = window.innerWidth / 2;
@@ -116,10 +97,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
     return { x: originPoint.x - cx, y: originPoint.y - cy, scale: 0.22 };
   }, [originPoint]);
 
-  // Approximate on-screen cart position for the "fly to cart" moment — the
-  // cart icon lives in the site header, outside this component, so this is
-  // a stylistic approximation (top-right, where cart icons conventionally
-  // sit) rather than a measured target.
   const cartTarget = { x: window.innerWidth / 2 - 40, y: -(window.innerHeight / 2) + 30, scale: 0.12 };
 
   const clearAllTimers = () => {
@@ -127,12 +104,9 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
     timers.current = [];
   };
 
-  // Phase sequence: settle center -> scan -> glow -> reveal info.
   useEffect(() => {
     if (phase !== "entering") return;
-    timers.current.push(
-      setTimeout(() => setPhase("scanning"), 500) // matches the "center" transition duration below
-    );
+    timers.current.push(setTimeout(() => setPhase("scanning"), 500));
     return clearAllTimers;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -151,12 +125,10 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
     return () => clearTimeout(t1);
   }, [phase]);
 
-  // Reset gallery position whenever the selected color/product changes.
   useEffect(() => {
     setImgIndex(0);
   }, [activeSlug]);
 
-  // Lock background scroll while open.
   useEffect(() => {
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -173,7 +145,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
     setTimeout(() => onClose && onClose(), CLOSE_DURATION);
   };
 
-  // ESC to close.
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && requestClose();
     window.addEventListener("keydown", onKey);
@@ -181,9 +152,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  // Add to Cart: update the cart immediately (existing logic, unchanged),
-  // then hold a success state, then shrink + drift toward the cart before
-  // closing — instead of closing instantly.
   const handleAddToCart = () => {
     if (phase !== "revealed") return;
     addToCart(activeProduct, quantity);
@@ -196,8 +164,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
   const goPrev = () => setImgIndex((i) => (i - 1 + gallery.length) % gallery.length);
   const goNext = () => setImgIndex((i) => (i + 1) % gallery.length);
 
-  // Gentle reflection highlight that drifts toward the cursor — kept subtle,
-  // no rotation or heavy 3D, just a soft light position shift.
   const handleMouseMove = (e) => {
     if (!imageStageRef.current || !window.matchMedia("(hover: hover)").matches) return;
     const rect = imageStageRef.current.getBoundingClientRect();
@@ -249,9 +215,7 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
         </button>
 
         <div className="grid sm:grid-cols-2 gap-6 sm:gap-0">
-          {/* LEFT — image stage */}
           <div className="relative flex flex-col bg-cream/60 p-6 sm:p-9 rounded-t-[28px] sm:rounded-l-[28px] sm:rounded-tr-none sm:border-r sm:border-border/40">
-            {/* Color-adaptive spotlight — fades in only once the product has settled center-stage */}
             <motion.div
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -298,14 +262,10 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                 </>
               )}
 
-              {/* Premium top-to-bottom scan — reuses the existing
-                  .visual-scan-line / visualScanSweep animation from
-                  index.css (Scan & Match), only rendered once per open. */}
               {phase === "scanning" && (
                 <div className="absolute inset-x-0 top-0 h-1/3 visual-scan-line z-20 pointer-events-none" />
               )}
 
-              {/* Slow float + gentle cursor-following reflection highlight */}
               <motion.div
                 className="relative w-full h-full flex items-center justify-center p-6 sm:p-9"
                 animate={{
@@ -337,7 +297,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                   />
                 </AnimatePresence>
 
-                {/* Add-to-cart success flash, shown over the image */}
                 <AnimatePresence>
                   {phase === "success" && (
                     <motion.div
@@ -380,7 +339,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
             )}
           </div>
 
-          {/* RIGHT — progressive info reveal, only once the scan has finished */}
           <AnimatePresence>
             {(phase === "revealed" || phase === "success" || phase === "flying") && (
               <motion.div
@@ -558,9 +516,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                   </Link>
                 </motion.div>
 
-                {/* NEW — Complete Your Look, Estimated Delivery, Share,
-                    Gift This Product. Fades in with the rest of this
-                    column since it's inside the same staggered variants. */}
                 <motion.div variants={itemVariants}>
                   <QuickViewExtras product={activeProduct} onNavigate={onClose} />
                 </motion.div>

@@ -1,3 +1,4 @@
+//products.js
 // REVE CULT Product Catalog — static data for prototype
 // Images are AI-generated placeholders labeled as samples.
 

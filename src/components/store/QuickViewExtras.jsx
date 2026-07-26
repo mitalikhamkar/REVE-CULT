@@ -1,12 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Truck, Share2, Check } from "lucide-react";
 
-const SIGNATURE_BOX_ROUTE = "/signature-box";
 const DEFAULT_POUCH_SLUG = "mini-luxe-case-bag";
 
-// Cross-sell chips unrelated to the Signature Box flow — kept separate
-// from the single "Gift this Hamper" CTA below.
 const STYLING_SUGGESTIONS = [
   { label: "Carry Pouch", slug: DEFAULT_POUCH_SLUG },
   { label: "REVE CULT T-Shirt", slug: "reve-cult-tshirt" },
@@ -20,7 +17,6 @@ const STYLING_SUGGESTIONS = [
  *   <QuickViewExtras product={product} onNavigate={onClose} />
  */
 export default function QuickViewExtras({ product, onNavigate }) {
-  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
@@ -40,14 +36,6 @@ export default function QuickViewExtras({ product, onNavigate }) {
     } catch {
       // clipboard blocked — no-op
     }
-  };
-
-  const handleGiftHamper = () => {
-    // Pre-selects this hamper's earbuds and the default carry pouch on
-    // the Signature Box builder, which reads `earbud` off the query
-    // string (see SignatureBox.jsx).
-    navigate(`${SIGNATURE_BOX_ROUTE}?earbud=${product.slug}&pouch=${DEFAULT_POUCH_SLUG}`);
-    onNavigate?.();
   };
 
   return (
@@ -92,16 +80,6 @@ export default function QuickViewExtras({ product, onNavigate }) {
           )}
         </button>
       </div>
-
-      {/* Single premium CTA — replaces every other Signature Box action */}
-      {product?.is_hamper && (
-        <button
-          onClick={handleGiftHamper}
-          className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-sm font-medium bg-gold/10 text-gold border border-gold/30 hover:bg-gold/20 transition-all duration-200 hover:scale-[1.01]"
-        >
-          🎁 Gift this Hamper
-        </button>
-      )}
     </div>
   );
 }
