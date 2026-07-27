@@ -1,7 +1,7 @@
 //Home.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Sparkles, ScanLine, ArrowRight, Quote } from "lucide-react";
+import { Sparkles, ScanLine, ArrowRight } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
 import ProductCard from "@/components/store/ProductCard";
 import FindMyReveMatch from "@/components/store/FindMyReveMatch";
@@ -10,12 +10,6 @@ import RitualLoader from "@/components/store/RitualLoader";
 import ProductShowcase from "@/components/store/ProductShowcase";
 import CategoryShowcase from "@/components/store/CategoryShowcase";
 import HeroGallery from "@/components/store/HeroGallery";
-
-const TESTIMONIALS = [
-  { name: "Ananya", text: "The Mint Green SERAPH earbuds are honestly the prettiest tech I own. Sound is crystal clear and they look gorgeous.", role: "College Student" },
-  { name: "Priya", text: "Finally a tech brand that feels designed for me. The FLORA earbuds fit perfectly and the ANC is a lifesaver at work.", role: "Marketing Professional" },
-  { name: "Meera", text: "The packaging, the design, the sound — everything feels premium. The Mini Luxe case is my everyday essential now.", role: "Designer" },
-];
 
 export default function Home() {
   const [showQuiz, setShowQuiz] = useState(false);
@@ -28,7 +22,6 @@ export default function Home() {
     else sessionStorage.setItem("reve_ritual_seen", "true");
   }, []);
 
-  const newArrivals = PRODUCTS.filter((p) => p.is_new_arrival);
   const bestsellers = PRODUCTS.filter((p) => p.is_bestseller);
   const featured = PRODUCTS.filter((p) => p.is_featured).slice(0, 4);
 
@@ -225,24 +218,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* New Arrivals */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-blush mb-1">Just landed</p>
-            <h2 className="text-3xl lg:text-4xl font-heading font-light">New Arrivals</h2>
-          </div>
-          <Link to="/shop" className="text-sm font-medium text-foreground hover:text-blush transition-colors flex items-center gap-1">
-            View all <ArrowRight size={14} />
-          </Link>
-        </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-          {newArrivals.slice(0, 4).map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
-          ))}
-        </div>
-      </section>
-
       {/* Featured grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-8">
@@ -302,35 +277,6 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Customer Favorites / Testimonials */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-10">
-          <p className="text-xs uppercase tracking-[0.2em] text-blush mb-2">Customer Favorites</p>
-          <h2 className="text-3xl lg:text-4xl font-heading font-light">Loved by our community</h2>
-        </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          {TESTIMONIALS.map((t, i) => (
-            <div
-              key={t.name}
-              className="p-6 bg-white rounded-2xl border border-border animate-fade-in-up"
-              style={{ animationDelay: `${i * 0.1}s`, opacity: 0 }}
-            >
-              <Quote size={24} className="text-blush/30 mb-3" />
-              <p className="text-sm text-foreground/80 leading-relaxed mb-4">"{t.text}"</p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blush/15 flex items-center justify-center text-sm font-medium text-blush">
-                  {t.name[0]}
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{t.name}</p>
-                  <p className="text-xs text-muted-foreground">{t.role}</p>
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
