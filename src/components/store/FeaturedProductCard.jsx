@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Check, Eye } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
 import QuickViewModal from "@/components/store/QuickViewModal";
+import ProductImageGallery from "@/components/store/ProductImageGallery";
 
 /**
  * FeaturedProductCard — a large, horizontal, editorial presentation for a
@@ -37,6 +38,13 @@ export default function FeaturedProductCard({ product }) {
     setQuickViewOpen(true);
   };
 
+  // Default image is the Hamper image; gallery also includes Earbuds + Carry
+  // Pouch when available. Falls back to the single product image otherwise.
+  const galleryImages =
+    product.gallery_images && product.gallery_images.length > 0
+      ? product.gallery_images
+      : [product.image_url];
+
   return (
     <>
       <Link to={`/product/${product.slug}`} className="group block">
@@ -55,9 +63,10 @@ export default function FeaturedProductCard({ product }) {
         >
           {/* LEFT — large lifestyle image, never stretched */}
           <div className="relative h-64 sm:h-auto min-h-[280px] flex items-center justify-center p-8 sm:p-10">
-            {product.is_bestseller && (
-              <span className="absolute top-5 left-5 z-10 bg-blush text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
-                Bestseller
+            {/* ANC-only badge — shown solely when the product supports it */}
+            {product.has_anc && (
+              <span className="absolute top-5 left-5 z-10 bg-gold text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
+                ANC
               </span>
             )}
             <button
@@ -71,10 +80,10 @@ export default function FeaturedProductCard({ product }) {
                 className={wishlisted ? "fill-blush text-blush" : "text-foreground"}
               />
             </button>
-            <img
-              src={product.image_url}
+            <ProductImageGallery
+              images={galleryImages}
               alt={`${product.name} — ${product.color}`}
-              className="max-w-full max-h-full w-auto h-auto object-contain drop-shadow-[0_18px_28px_rgba(38,30,20,0.14)] transition-transform duration-500 ease-out group-hover:scale-[1.04]"
+              imgClassName="max-w-full max-h-full w-auto h-auto object-contain drop-shadow-[0_18px_28px_rgba(38,30,20,0.14)] transition-transform duration-500 ease-out group-hover:scale-[1.04]"
             />
           </div>
 

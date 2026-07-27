@@ -163,6 +163,13 @@ export const PRODUCTS = [
     image_url: "/images/airpods/REVE%20SERAPH%20-%20Silver%20Black.png",
     gallery_urls: ["/images/airpods/REVE%20SERAPH%20-%20Silver%20Black.png"],
     hamper_image_url: "/images/hamper/REVE%20SERAPH%20-%20Silver_Black_Hamper.jpeg",
+    hamper_other_image_url: "/images/hamper/REVE%20SERAPH%20-%20Silver_Black_Hamper_Other.jpeg",
+    // Homepage product card gallery: Hamper (default) -> Hamper (other angle) -> Product image
+    gallery_images: [
+      "/images/hamper/REVE%20SERAPH%20-%20Silver_Black_Hamper.jpeg",
+      "/images/hamper/REVE%20SERAPH%20-%20Silver_Black_Hamper_Other.jpeg",
+      "/images/airpods/REVE%20SERAPH%20-%20Silver%20Black.png",
+    ],
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
@@ -181,7 +188,7 @@ export const PRODUCTS = [
     avg_rating: 0,
     review_count: 0,
     is_featured: true,
-    is_bestseller: true,
+    is_bestseller: false,
     is_new_arrival: false,
     stock: 100,
     vibes: ["Minimal", "Bold"],
@@ -200,6 +207,13 @@ export const PRODUCTS = [
     image_url: "/images/airpods/REVE%20SERAPH%20-%20Mint%20Green.png",
     gallery_urls: ["/images/airpods/REVE%20SERAPH%20-%20Mint%20Green.png"],
     hamper_image_url: "/images/hamper/REVE%20SERAPH%20-%20Mint_Green_Hamper.jpeg",
+    hamper_other_image_url: "/images/hamper/REVE%20SERAPH%20-%20Mint_Green_Hamper_Other.jpeg",
+    // Homepage product card gallery: Hamper (default) -> Hamper (other angle) -> Product image
+    gallery_images: [
+      "/images/hamper/REVE%20SERAPH%20-%20Mint_Green_Hamper.jpeg",
+      "/images/hamper/REVE%20SERAPH%20-%20Mint_Green_Hamper_Other.jpeg",
+      "/images/airpods/REVE%20SERAPH%20-%20Mint%20Green.png",
+    ],
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
@@ -218,7 +232,7 @@ export const PRODUCTS = [
     avg_rating: 0,
     review_count: 0,
     is_featured: true,
-    is_bestseller: true,
+    is_bestseller: false,
     is_new_arrival: true,
     stock: 100,
     vibes: ["Soft", "Minimal"],
@@ -237,6 +251,13 @@ export const PRODUCTS = [
     image_url: "/images/airpods/REVE%20SERAPH%20-%20Silver%20White.png",
     gallery_urls: ["/images/airpods/REVE%20SERAPH%20-%20Silver%20White.png"],
     hamper_image_url: "/images/hamper/REVE%20SERAPH%20-%20Silver_White_Hamper.jpeg",
+    hamper_other_image_url: "/images/hamper/REVE%20SERAPH%20-%20Silver_White_Hamper_Other.jpeg",
+    // Homepage product card gallery: Hamper (default) -> Hamper (other angle) -> Product image
+    gallery_images: [
+      "/images/hamper/REVE%20SERAPH%20-%20Silver_White_Hamper.jpeg",
+      "/images/hamper/REVE%20SERAPH%20-%20Silver_White_Hamper_Other.jpeg",
+      "/images/airpods/REVE%20SERAPH%20-%20Silver%20White.png",
+    ],
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
@@ -274,6 +295,13 @@ export const PRODUCTS = [
     image_url: "/images/airpods/REVE%20FLORA%20-%20Golden%20Black.png",
     gallery_urls: ["/images/airpods/REVE%20FLORA%20-%20Golden%20Black.png"],
     hamper_image_url: "/images/hamper/REVE%20FLORA%20-%20Golden_Black_Hamper.jpeg",
+    hamper_other_image_url: "/images/hamper/REVE%20FLORA%20-%20Golden_Black_Hamper_Other.jpeg",
+    // Best Sellers order (#1): Hamper (default) -> Hamper (other angle) -> Product image
+    gallery_images: [
+      "/images/hamper/REVE%20FLORA%20-%20Golden_Black_Hamper.jpeg",
+      "/images/hamper/REVE%20FLORA%20-%20Golden_Black_Hamper_Other.jpeg",
+      "/images/airpods/REVE%20FLORA%20-%20Golden%20Black.png",
+    ],
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
@@ -293,6 +321,7 @@ export const PRODUCTS = [
     avg_rating: 0,
     review_count: 0,
     is_featured: true,
+    // Best Sellers #1 — REVE FLORA Golden Black
     is_bestseller: true,
     is_new_arrival: false,
     stock: 90,
@@ -313,6 +342,13 @@ export const PRODUCTS = [
     image_url: "/images/airpods/REVE%20FLORA%20-%20Golden%20Beige.png",
     gallery_urls: ["/images/airpods/REVE%20FLORA%20-%20Golden%20Beige.png"],
     hamper_image_url: "/images/hamper/REVE%20FLORA%20-%20Golden_Beige_Hamper.jpeg",
+    hamper_other_image_url: "/images/hamper/REVE%20FLORA%20-%20Golden_Beige_Hamper_Other.jpeg",
+    // Best Sellers order (#2): Hamper (default) -> Hamper (other angle) -> Product image
+    gallery_images: [
+      "/images/hamper/REVE%20FLORA%20-%20Golden_Beige_Hamper.jpeg",
+      "/images/hamper/REVE%20FLORA%20-%20Golden_Beige_Hamper_Other.jpeg",
+      "/images/airpods/REVE%20FLORA%20-%20Golden%20Beige.png",
+    ],
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
@@ -332,7 +368,8 @@ export const PRODUCTS = [
     avg_rating: 0,
     review_count: 0,
     is_featured: true,
-    is_bestseller: false,
+    // Best Sellers #2 — REVE FLORA Golden Beige
+    is_bestseller: true,
     is_new_arrival: true,
     stock: 90,
     vibes: ["Soft", "Minimal"],

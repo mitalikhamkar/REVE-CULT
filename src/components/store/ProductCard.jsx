@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Check, Eye } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
 import QuickViewModal from "@/components/store/QuickViewModal";
+import ProductImageGallery from "@/components/store/ProductImageGallery";
 
 export default function ProductCard({ product, index = 0 }) {
   const { addToCart, toggleWishlist, isInWishlist } = useStore();
@@ -33,6 +34,13 @@ export default function ProductCard({ product, index = 0 }) {
     setQuickViewOpen(true);
   };
 
+  // Default image is the Hamper image; gallery also includes Earbuds + Carry
+  // Pouch when available. Falls back to the single product image otherwise.
+  const galleryImages =
+    product.gallery_images && product.gallery_images.length > 0
+      ? product.gallery_images
+      : [product.image_url];
+
   return (
     <>
       <Link
@@ -55,28 +63,17 @@ export default function ProductCard({ product, index = 0 }) {
               its native image dimensions. */}
           <div className="relative h-56 sm:h-64 shrink-0 overflow-hidden bg-cream/60">
             <div className="absolute inset-0 flex items-center justify-center p-7 sm:p-8">
-              <img
-                src={product.image_url}
+              <ProductImageGallery
+                images={galleryImages}
                 alt={`${product.name} — ${product.color}`}
-                className="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-500 ease-out group-hover:scale-[1.05]"
+                imgClassName="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-500 ease-out group-hover:scale-[1.05]"
               />
             </div>
 
-            {/* Top-left: badges */}
+            {/* Top-left: badges — ANC only, shown solely when the product supports it */}
             <div className="absolute top-3 left-3 flex flex-col gap-1.5 items-start z-10">
-              {product.is_new_arrival && (
-                <span className="bg-sage text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">New</span>
-              )}
-              {product.is_bestseller && (
-                <span className="bg-blush text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">Bestseller</span>
-              )}
               {product.has_anc && (
                 <span className="bg-gold text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">ANC</span>
-              )}
-              {product.is_hamper && (
-                <span className="bg-white/90 text-foreground text-[10px] font-semibold px-2.5 py-1 rounded-full border border-border/50">
-                  🎁 Hamper
-                </span>
               )}
             </div>
 
