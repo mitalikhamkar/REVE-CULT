@@ -23,11 +23,6 @@ import {
 } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
-import QuickViewExtras from "@/components/store/QuickViewExtras";
-
-// Used to add the carry pouch as the 3rd gallery slide for hamper
-// products — the same physical pouch ships inside every hamper.
-const CARRY_POUCH = PRODUCTS.find((p) => p.id === "p2");
 
 const SPOTLIGHT_DELAY = 450;
 const SCAN_DURATION = 1600;
@@ -77,12 +72,12 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
   const siblings = PRODUCTS.filter((p) => p.collection === product.collection && p.color);
   const wishlisted = isInWishlist(activeProduct.id);
 
-  // Hamper products lead with the hamper (box) photo, then the earbuds,
-  // then the shared carry pouch — a small manual gallery, no auto-rotate.
-  // Non-hamper products (T-shirt, standalone pouch) keep their existing
-  // gallery_urls behaviour untouched.
+  // Hamper products lead with the hamper (box) photo, then the second
+  // hamper angle, then the standalone earbuds shot — a small manual
+  // gallery, no auto-rotate. Non-hamper products (T-shirt, standalone
+  // pouch) keep their existing gallery_urls behaviour untouched.
   const gallery = activeProduct.is_hamper
-    ? [activeProduct.hamper_image_url, activeProduct.image_url, CARRY_POUCH?.image_url].filter(Boolean)
+    ? [activeProduct.hamper_image_url, activeProduct.hamper_other_image_url, activeProduct.image_url].filter(Boolean)
     : activeProduct.gallery_urls && activeProduct.gallery_urls.length > 0
     ? activeProduct.gallery_urls
     : [activeProduct.image_url];
@@ -215,7 +210,7 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
         </button>
 
         <div className="grid sm:grid-cols-2 gap-6 sm:gap-0">
-          <div className="relative flex flex-col bg-cream/60 p-6 sm:p-9 rounded-t-[28px] sm:rounded-l-[28px] sm:rounded-tr-none sm:border-r sm:border-border/40">
+          <div className="relative flex flex-col bg-cream/60 p-5 sm:p-7 rounded-t-[28px] sm:rounded-l-[28px] sm:rounded-tr-none sm:border-r sm:border-border/40">
             <motion.div
               className="absolute inset-0 pointer-events-none"
               style={{
@@ -227,11 +222,15 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
               transition={{ duration: 0.6, ease: "easeOut" }}
             />
 
+            {/* Image stage — larger and always centered, so the product
+                reads as the hero the instant Quick View opens, the way a
+                premium product gallery (Apple/Nothing/Dyson-style) would
+                present it. */}
             <div
               ref={imageStageRef}
               onMouseMove={handleMouseMove}
               onMouseLeave={resetReflection}
-              className="relative flex-1 min-h-[220px] sm:min-h-[400px] rounded-[28px] overflow-hidden flex items-center justify-center"
+              className="relative flex-1 min-h-[280px] sm:min-h-[460px] lg:min-h-[500px] rounded-[28px] overflow-hidden flex items-center justify-center"
               style={{
                 boxShadow:
                   "0 30px 60px -30px rgba(120,60,70,0.32), 0 10px 24px -14px rgba(120,60,70,0.20), inset 0 1px 0 rgba(255,255,255,0.6)",
@@ -248,16 +247,16 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                   <button
                     onClick={goPrev}
                     aria-label="Previous image"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-white hover:scale-110 transition-all duration-200"
                   >
-                    <ChevronLeft size={16} />
+                    <ChevronLeft size={17} />
                   </button>
                   <button
                     onClick={goNext}
                     aria-label="Next image"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-9 h-9 rounded-full bg-white/85 backdrop-blur-sm flex items-center justify-center shadow-sm hover:bg-white hover:scale-105 transition-all"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center shadow-md hover:bg-white hover:scale-110 transition-all duration-200"
                   >
-                    <ChevronRight size={16} />
+                    <ChevronRight size={17} />
                   </button>
                 </>
               )}
@@ -267,7 +266,7 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
               )}
 
               <motion.div
-                className="relative w-full h-full flex items-center justify-center p-6 sm:p-9"
+                className="relative w-full h-full flex items-center justify-center p-5 sm:p-8"
                 animate={{
                   y: [0, -2, 0],
                   scale: phase === "success" ? 0.96 : 1,
@@ -514,10 +513,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                   >
                     View Full Details <ArrowRight size={14} />
                   </Link>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                  <QuickViewExtras product={activeProduct} onNavigate={onClose} />
                 </motion.div>
               </motion.div>
             )}
