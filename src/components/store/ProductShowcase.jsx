@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
+import { formatPrice } from "@/lib/formatPrice";
 
 // Pull the showcased earbuds straight from the existing product catalog —
 // name, price, and tagline are never re-hardcoded here.
@@ -211,11 +212,11 @@ export default function ProductShowcase() {
           {activeItem && (
             <div className="relative mt-5 sm:mt-7 text-center" key={activeItem.id}>
               <div className="animate-fade-in-up" style={{ opacity: 0 }}>
-                <h3 className="text-lg lg:text-xl font-heading font-light tracking-wide text-foreground">
+                <h3 className="product-title inline-block tracking-wide">
                   {activeItem.name}
                 </h3>
                 <p className="text-sm italic text-muted-foreground mt-1.5">{activeItem.tagline}</p>
-                <p className="text-lg font-heading font-semibold text-foreground mt-2.5">₹{activeItem.price}</p>
+                <p className="product-price mt-2.5">{formatPrice(activeItem.price)}</p>
                 <Link
                   to={`/product/${activeItem.slug}`}
                   className="inline-flex items-center gap-1.5 text-sm font-medium text-gold hover:gap-2.5 transition-all mt-3.5"

@@ -431,3 +431,62 @@
   to { opacity: 0; transform: translateY(8px); }
 }
 .toast-fade-out { animation: toastFadeOut 0.3s ease-in forwards; }
+
+/* =========================================================
+   Product typography — shared classes for ANY place a product
+   name/price is shown: product cards, carousels/sliders, the
+   rotating showcase, shop grid, featured/bestseller sections.
+   Apply these same class names in every such component so
+   typography stays identical site-wide instead of drifting
+   per-component. Nothing here changes layout, spacing, or
+   structure — only type size/weight/color on the text itself.
+   ========================================================= */
+:root {
+  /* Darker than --foreground, reserved for the product name so it reads
+     as the clear visual anchor after the product image. */
+  --charcoal: 213 6% 10%;
+  /* A step lighter than --charcoal — used for price, so it stays fully
+     legible but never competes with the product name for attention. */
+  --price-muted: 213 5% 34%;
+}
+.dark {
+  --charcoal: 38 36% 96%;
+  --price-muted: 38 20% 72%;
+}
+
+.product-collection-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem; /* 11px */
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.product-title {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.1875rem; /* 19px — the largest, darkest text on the card */
+  line-height: 1.3;
+  color: hsl(var(--charcoal));
+}
+
+.product-price {
+  font-family: var(--font-body);
+  font-weight: 500; /* Medium, a step down from the title's weight */
+  font-size: 0.9375rem; /* 15px — smaller than the title, secondary role */
+  color: hsl(var(--price-muted));
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: 0.01em;
+}
+
+.product-color-label {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+}
+
+@media (min-width: 640px) {
+  .product-title { font-size: 1.3125rem; } /* 21px */
+  .product-price { font-size: 1rem; } /* 16px */
+}
