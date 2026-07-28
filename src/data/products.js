@@ -16,6 +16,8 @@ const HAMPER_INCLUDES = [
   "Premium Gift Box Packaging",
 ];
 
+// Verified against official REVE SERAPH product spec images — unchanged
+// (all values already matched the official images).
 const SERAPH_SPECS = {
   "Bluetooth Version": "5.4",
   "Wireless Range": "10–15 m",
@@ -49,22 +51,25 @@ const SERAPH_CONTROLS = {
   ],
 };
 
+// Verified against official REVE FLORA product spec images, with the
+// founder's corrections applied (Playback Time overridden to 35–40 Hours;
+// ANC confirmed Yes). Frequency Response / Sensitivity removed — not
+// present on the official FLORA spec images, so not invented here.
 const FLORA_SPECS = {
-  "ANC": "27–32dB",
-  "Bluetooth": "5.4",
-  "Range": "10–15 m",
-  "Driver": "13mm, 32Ω",
-  "Earbud Battery": "35mAh",
-  "Case Battery": "300mAh",
-  "Playback": "4–5 hrs",
-  "Talk Time": "4–5 hrs",
+  "Bluetooth Version": "5.4",
+  "Chipset": "AB5696D (Low Power, Stable Performance)",
+  "ANC": "Yes — 30dB",
+  "Driver": "13mm Composite Film Driver",
+  "Wireless Range": "10–15 m (open) / 5–10 m (with obstacles)",
+  "Earbud Battery": "40mAh each",
+  "Case Battery": "260mAh",
+  "Playback Time": "35–40 Hours", // Founder correction — overrides spec-image value
   "Charging": "USB Type-C",
-  "Frequency Response": "20Hz–8kHz",
-  "Sensitivity": "108dB",
-  "Earbud Charge": "~55 min",
-  "Case Charge": "~80 min",
-  "Standby (Off)": "up to 150 days",
-  "Bluetooth Standby": "up to 30 hrs",
+  "Standby Time": "Approx. 57 hrs",
+  "Dormancy Period": "Over 1 year",
+  "Body Material": "ABS (Durable, Lightweight)",
+  "Weight": "Earbuds ~33.5g / With Packaging ~94.5g",
+  "Available Colors": "Black, Gold",
 };
 
 const FLORA_CONTROLS = {
@@ -91,6 +96,15 @@ const FLORA_CONTROLS = {
 };
 
 const FLORA_CARE = "Keep away from water, dust, scratches, and heat. Designs are hand-printed — do not scratch or rub. Mini case logo is a metal sticker — avoid peeling or nail contact. Handle gently, fully handmade product.";
+
+// Shared, simplified description copy (Founder brief §4 — 2–4 short
+// lines, lifestyle / premium / design focused, no hamper-contents
+// listing here since that's shown separately as chips via hamper_includes).
+const SERAPH_DESCRIPTION =
+  "Quiet luxury, made audible. REVE SERAPH is an everyday companion built around calm — soft celestial artwork meeting precision sound, designed for clarity, balance, and elevated presence.";
+
+const FLORA_DESCRIPTION =
+  "Soft, elegant, and quietly confident — REVE FLORA blends everyday sound with a calm, feminine energy inspired by nature, designed for effortless days and delicate details worth savouring.";
 
 export const PRODUCTS = [
   {
@@ -173,7 +187,7 @@ export const PRODUCTS = [
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
-    description: "Quiet luxury, made audible. REVE SERAPH is a complete Premium Hamper built around an object of calm — where soft, celestial artwork meets precision sound. Every purchase includes the wireless earbuds, mini case bag, pocket glam potli, USB cable, warranty and manual, and premium gift box packaging, all in one.",
+    description: SERAPH_DESCRIPTION,
     essence: "Named after the highest form of light and harmony, SERAPH represents clarity, balance, and elevated presence.",
     highlights: [
       "Complete Premium Hamper — earbuds, case bag, potli, cable, warranty & gift box",
@@ -217,7 +231,7 @@ export const PRODUCTS = [
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
-    description: "Quiet luxury, made audible. REVE SERAPH is a complete Premium Hamper built around an object of calm — where soft, celestial artwork meets precision sound. Every purchase includes the wireless earbuds, mini case bag, pocket glam potli, USB cable, warranty and manual, and premium gift box packaging, all in one.",
+    description: SERAPH_DESCRIPTION,
     essence: "Named after the highest form of light and harmony, SERAPH represents clarity, balance, and elevated presence. Now in a soft, refreshing Mint Green.",
     highlights: [
       "Complete Premium Hamper — earbuds, case bag, potli, cable, warranty & gift box",
@@ -261,7 +275,7 @@ export const PRODUCTS = [
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
-    description: "Quiet luxury, made audible. REVE SERAPH is a complete Premium Hamper built around an object of calm — where soft, celestial artwork meets precision sound. Every purchase includes the wireless earbuds, mini case bag, pocket glam potli, USB cable, warranty and manual, and premium gift box packaging, all in one.",
+    description: SERAPH_DESCRIPTION,
     essence: "Named after the highest form of light and harmony, SERAPH represents clarity, balance, and elevated presence. Now in a pristine Silver White.",
     highlights: [
       "Complete Premium Hamper — earbuds, case bag, potli, cable, warranty & gift box",
@@ -305,13 +319,14 @@ export const PRODUCTS = [
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
-    description: "Soft, elegant, and thoughtfully designed — REVE FLORA is a complete Premium Hamper blending everyday sound with a calm, feminine expression inspired by nature. Every purchase includes the wireless earbuds, mini case bag, pocket glam potli, USB cable, warranty and manual, and premium gift box packaging, all in one.",
+    description: FLORA_DESCRIPTION,
     essence: "Artwork: Minimal floral patterns etched with precision, symbolising growth, grace, and quiet strength.",
     highlights: [
       "Complete Premium Hamper — earbuds, case bag, potli, cable, warranty & gift box",
-      "Active Noise Cancellation (27–32dB)",
+      "Active Noise Cancellation (ANC)",
+      "35–40 Hours Playback Time",
       "Minimal floral artwork inspired by nature",
-      "Timeless and refined Golden Black finish",
+      "Timeless Golden Black finish",
     ],
     tagline: "Everyday sound, calm feminine expression.",
     touch_controls: FLORA_CONTROLS,
@@ -352,13 +367,14 @@ export const PRODUCTS = [
     is_hamper: true,
     hamper_label: "Premium Audio Hamper",
     hamper_includes: HAMPER_INCLUDES,
-    description: "Soft, elegant, and thoughtfully designed — REVE FLORA is a complete Premium Hamper blending everyday sound with a calm, feminine expression inspired by nature. Every purchase includes the wireless earbuds, mini case bag, pocket glam potli, USB cable, warranty and manual, and premium gift box packaging, all in one.",
+    description: FLORA_DESCRIPTION,
     essence: "Artwork: Minimal floral patterns etched with precision, symbolising growth, grace, and quiet strength.",
     highlights: [
       "Complete Premium Hamper — earbuds, case bag, potli, cable, warranty & gift box",
-      "Active Noise Cancellation (27–32dB)",
+      "Active Noise Cancellation (ANC)",
+      "35–40 Hours Playback Time",
       "Minimal floral artwork inspired by nature",
-      "Warm and elegant Golden Beige finish",
+      "Warm Golden Beige finish",
     ],
     tagline: "Everyday sound, calm feminine expression.",
     touch_controls: FLORA_CONTROLS,

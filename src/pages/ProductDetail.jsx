@@ -9,6 +9,7 @@ import ReviewSection from "@/components/store/ReviewSection";
 import DemoVideoSection from "@/components/store/DemoVideoSection";
 import RitualLoader from "@/components/store/RitualLoader";
 import ProductCard from "@/components/store/ProductCard";
+import ProductImageGallery from "@/components/store/ProductImageGallery";
 
 export default function ProductDetail() {
   const { slug } = useParams();
@@ -44,6 +45,17 @@ export default function ProductDetail() {
   const wishlisted = isInWishlist(product.id);
   const relatedProducts = PRODUCTS.filter((p) => p.collection === product.collection && p.id !== product.id).slice(0, 4);
 
+  // Same gallery source used on the Homepage / Shop product cards:
+  // Hamper (default) -> Hamper (other angle) -> Product close-up.
+  // Falls back to gallery_urls, then the single image_url, for
+  // non-hamper products (T-shirt, mini case bag) so they're unaffected.
+  const galleryImages =
+    product.gallery_images && product.gallery_images.length > 0
+      ? product.gallery_images
+      : product.gallery_urls && product.gallery_urls.length > 0
+      ? product.gallery_urls
+      : [product.image_url];
+
   const handleAddToCart = () => {
     addToCart(product, quantity);
     setAdded(true);
@@ -69,14 +81,14 @@ export default function ProductDetail() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Visual story — left */}
           <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-            <div className="relative overflow-hidden rounded-3xl halo-bg">
-              <img
-                src={product.image_url}
+            <div className="relative overflow-hidden rounded-3xl halo-bg group">
+              <ProductImageGallery
+                images={galleryImages}
                 alt={`${product.name} — ${product.color}`}
-                className="w-full aspect-square object-cover"
+                imgClassName="w-full aspect-square object-cover"
               />
               {product.has_anc && (
-                <span className="absolute top-4 right-4 bg-gold text-white text-[10px] font-semibold px-3 py-1 rounded-full">
+                <span className="absolute top-4 right-4 z-10 bg-gold text-white text-[10px] font-semibold px-3 py-1 rounded-full">
                   ANC Enabled
                 </span>
               )}
