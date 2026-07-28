@@ -1,24 +1,29 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Plus, Check, Minus, Gift, ShieldCheck, Bluetooth } from "lucide-react";
+import { X, Plus, Check, Gift, Bluetooth } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 // Products eligible for comparison — the hampers (SERAPH / FLORA), since
 // the spec rows below (ANC, battery, Bluetooth) are earbud-hamper fields.
 const COMPARABLE = PRODUCTS.filter((p) => p.category.toLowerCase().includes("earbud"));
 
-const MAX_ROW_DELAY = 0.12;
-
-function BatteryBar({ label, delay }) {
-  return (
-    <motion.div
-      initial={{ width: 0 }}
-      animate={{ width: "100%" }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
-      className="h-1.5 rounded-full bg-sage/70 max-w-[80px]"
-    />
-  );
+// Turns each product's existing structured fields into short "✓ label"
+// chips instead of a paragraph. If a product's data ever gains a
+// `highlights` array (e.g. ["Floral Artwork", "Soft Luxury Finish"]),
+// those are picked up automatically and appended after the spec-derived
+// chips — no other change needed here.
+function buildChips(p) {
+  const chips = [];
+  if (p.has_anc) chips.push("ANC");
+  const playback = p.specs?.["Playback"];
+  if (playback) chips.push(`${playback} Battery`);
+  const bluetooth = p.specs?.["Bluetooth Version"] || p.specs?.["Bluetooth"];
+  if (bluetooth) chips.push(`Bluetooth ${bluetooth}`);
+  if (p.is_hamper) chips.push("Premium Hamper Included");
+  if (Array.isArray(p.highlights)) chips.push(...p.highlights);
+  return chips;
 }
 
 export default function CompareModal({ onClose }) {
@@ -103,7 +108,7 @@ export default function CompareModal({ onClose }) {
                       <img src={p.image_url} alt={p.name} className="max-h-full object-contain" />
                     </div>
                     <p className="text-xs font-medium text-foreground line-clamp-2">{p.name}</p>
-                    <p className="text-xs text-muted-foreground mt-1">₹{p.price}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{formatPrice(p.price)}</p>
                   </button>
                 );
               })}
@@ -118,188 +123,76 @@ export default function CompareModal({ onClose }) {
             </button>
           </div>
         ) : (
-          <div className="p-6 sm:p-8 overflow-x-auto">
+          <div className="p-6 sm:p-8">
             <button
               onClick={() => setView("select")}
-              className="text-xs font-medium text-blush hover:underline mb-5"
+              className="text-xs font-medium text-blush hover:underline mb-6"
             >
               ← Add or change products
             </button>
 
-            <table className="w-full border-collapse min-w-[480px]">
-              <thead>
-                <tr>
-                  <th className="w-36" />
-                  {compareList.map((p) => (
-                    <th key={p.id} className="text-center px-3 pb-4 align-top">
-                      <div className="h-20 flex items-center justify-center mb-2">
-                        <img src={p.image_url} alt={p.name} className="max-h-full max-w-full object-contain" />
-                      </div>
-                      <p className="text-sm font-medium line-clamp-2">{p.name}</p>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {/* Price */}
-                <motion.tr
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0 * MAX_ROW_DELAY, duration: 0.4 }}
-                  className="border-t border-border/40"
-                >
-                  <td className="py-4 pr-4 text-xs uppercase tracking-wide text-muted-foreground">Price</td>
-                  {compareList.map((p) => (
-                    <td key={p.id} className="py-4 px-3 text-sm text-center font-heading font-semibold">₹{p.price}</td>
-                  ))}
-                </motion.tr>
+            {/* Fixed grid template regardless of whether there are 2 or 3
+                products — column width (and therefore card size) stays
+                identical either way; a 2-product comparison just leaves
+                one slot open on lg screens rather than stretching to fill
+                the row, so cards never resize based on count. */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {compareList.map((p, i) => {
+                const chips = buildChips(p);
+                return (
+                  <motion.div
+                    key={p.id}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ delay: i * 0.08, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    className="flex flex-col rounded-[20px] border border-border/50 bg-cream/40 p-5"
+                  >
+                    <div className="h-32 sm:h-36 flex items-center justify-center mb-4">
+                      <img src={p.image_url} alt={p.name} className="max-h-full max-w-full object-contain" />
+                    </div>
 
-                {/* Color swatches */}
-                <motion.tr
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1 * MAX_ROW_DELAY, duration: 0.4 }}
-                  className="border-t border-border/40"
-                >
-                  <td className="py-4 pr-4 text-xs uppercase tracking-wide text-muted-foreground">Color</td>
-                  {compareList.map((p, i) => (
-                    <td key={p.id} className="py-4 px-3 text-center">
-                      <motion.span
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 1 * MAX_ROW_DELAY + 0.1 + i * 0.05, type: "spring", stiffness: 300, damping: 16 }}
-                        className="inline-block w-6 h-6 rounded-full border border-border align-middle mr-1.5"
+                    <p className="product-collection-label mb-1">{p.collection}</p>
+                    <h3 className="font-heading font-semibold text-[15px] leading-snug mb-2 line-clamp-2" style={{ color: "#1a1a1a" }}>
+                      {p.name}
+                    </h3>
+                    <p className="font-body font-semibold text-[15px] mb-3" style={{ color: "#2a2a2a" }}>
+                      {formatPrice(p.price)}
+                    </p>
+
+                    <div className="flex items-center gap-1.5 mb-4 text-xs text-muted-foreground">
+                      <span
+                        className="w-3.5 h-3.5 rounded-full border border-border shrink-0"
                         style={{ background: p.color_hex }}
                       />
-                      <span className="text-xs align-middle">{p.color}</span>
-                    </td>
-                  ))}
-                </motion.tr>
+                      {p.color}
+                    </div>
 
-                {/* Bluetooth version */}
-                <motion.tr
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 2 * MAX_ROW_DELAY, duration: 0.4 }}
-                  className="border-t border-border/40"
-                >
-                  <td className="py-4 pr-4 text-xs uppercase tracking-wide text-muted-foreground">Bluetooth</td>
-                  {compareList.map((p) => (
-                    <td key={p.id} className="py-4 px-3 text-sm text-center">
-                      <span className="inline-flex items-center gap-1.5 justify-center">
-                        <Bluetooth size={13} className="text-sage" />
-                        {p.specs?.["Bluetooth Version"] || p.specs?.["Bluetooth"] || "—"}
-                      </span>
-                    </td>
-                  ))}
-                </motion.tr>
-
-                {/* Battery / playback bars */}
-                <motion.tr
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 3 * MAX_ROW_DELAY, duration: 0.4 }}
-                  className="border-t border-border/40"
-                >
-                  <td className="py-4 pr-4 text-xs uppercase tracking-wide text-muted-foreground">Playback</td>
-                  {compareList.map((p) => (
-                    <td key={p.id} className="py-4 px-3 text-center">
-                      <div className="flex flex-col items-center gap-1.5">
-                        <BatteryBar delay={3 * MAX_ROW_DELAY + 0.15} />
-                        <span className="text-xs text-muted-foreground">{p.specs?.["Playback"] || "—"}</span>
-                      </div>
-                    </td>
-                  ))}
-                </motion.tr>
-
-                {/* ANC */}
-                <motion.tr
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 4 * MAX_ROW_DELAY, duration: 0.4 }}
-                  className="border-t border-border/40"
-                >
-                  <td className="py-4 pr-4 text-xs uppercase tracking-wide text-muted-foreground">
-                    Active Noise Cancellation
-                  </td>
-                  {compareList.map((p) => (
-                    <td key={p.id} className="py-4 px-3 text-center">
-                      <AnimatePresence>
-                        {p.has_anc ? (
-                          <motion.span
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 4 * MAX_ROW_DELAY + 0.15, duration: 0.5 }}
-                          >
-                            <Check size={16} className="text-sage mx-auto" />
-                          </motion.span>
-                        ) : (
-                          <Minus size={16} className="text-muted-foreground mx-auto" />
-                        )}
-                      </AnimatePresence>
-                    </td>
-                  ))}
-                </motion.tr>
-
-                {/* Gift packaging */}
-                <motion.tr
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 5 * MAX_ROW_DELAY, duration: 0.4 }}
-                  className="border-t border-border/40"
-                >
-                  <td className="py-4 pr-4 text-xs uppercase tracking-wide text-muted-foreground">Gift Packaging</td>
-                  {compareList.map((p) => (
-                    <td key={p.id} className="py-4 px-3 text-center">
-                      {p.is_hamper && (
+                    {/* Feature chips — replaces the old paragraph description */}
+                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                      {chips.map((label, ci) => (
                         <motion.span
-                          initial={{ opacity: 0, scale: 0.7 }}
+                          key={label}
+                          initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          transition={{ delay: 5 * MAX_ROW_DELAY + 0.15, type: "spring", stiffness: 260, damping: 16 }}
+                          transition={{ delay: i * 0.08 + 0.15 + ci * 0.04, duration: 0.3 }}
+                          className="inline-flex items-center gap-1 text-[11px] font-medium bg-sage/10 text-sage rounded-full px-2.5 py-1"
                         >
-                          <Gift size={16} className="text-gold mx-auto" />
+                          {label === "Premium Hamper Included" ? (
+                            <Gift size={11} />
+                          ) : label.startsWith("Bluetooth") ? (
+                            <Bluetooth size={11} />
+                          ) : (
+                            <Check size={11} />
+                          )}
+                          {label}
                         </motion.span>
-                      )}
-                    </td>
-                  ))}
-                </motion.tr>
-
-                {/* Warranty badge */}
-                <motion.tr
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 6 * MAX_ROW_DELAY, duration: 0.4 }}
-                  className="border-t border-border/40"
-                >
-                  <td className="py-4 pr-4 text-xs uppercase tracking-wide text-muted-foreground">Warranty</td>
-                  {compareList.map((p) => (
-                    <td key={p.id} className="py-4 px-3 text-center">
-                      <motion.span
-                        initial={{ opacity: 0, y: 6 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 6 * MAX_ROW_DELAY + 0.15, duration: 0.4 }}
-                        className="inline-flex items-center gap-1.5 text-xs font-medium bg-accent/60 border border-border/50 rounded-full px-3 py-1.5"
-                      >
-                        <ShieldCheck size={13} className="text-sage" /> {p.is_hamper ? "Included" : "—"}
-                      </motion.span>
-                    </td>
-                  ))}
-                </motion.tr>
-
-                {/* Description */}
-                <motion.tr
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 7 * MAX_ROW_DELAY, duration: 0.4 }}
-                  className="border-t border-border/40"
-                >
-                  <td className="py-4 pr-4 text-xs uppercase tracking-wide text-muted-foreground align-top">Description</td>
-                  {compareList.map((p) => (
-                    <td key={p.id} className="py-4 px-3 text-xs text-muted-foreground align-top">{p.description}</td>
-                  ))}
-                </motion.tr>
-              </tbody>
-            </table>
+                      ))}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         )}
       </motion.div>
