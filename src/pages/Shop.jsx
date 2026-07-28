@@ -16,13 +16,14 @@ import AddToCartToast from "@/components/store/AddToCartToast";
 // Fixed catalog order, exactly as specified — pulled from the existing
 // product data by slug. Nothing about price/description/images is invented
 // or changed here; this only decides display order.
-const EARBUD_SLUGS = [
-  "reve-flora-golden-black",
-  "reve-flora-golden-beige",
-  "reve-seraph-mint-green",
-  "reve-seraph-silver-black",
-  "reve-seraph-silver-white",
-];
+//
+// Row 1 — REVE FLORA (2 products)
+// Row 2 — REVE SERAPH (3 products)
+// Row 3 — Apparel (T-Shirt, editorial feature)
+// Row 4 — Accessories (Carry Pouch, editorial feature)
+const FLORA_SLUGS = ["reve-flora-golden-black", "reve-flora-golden-beige"];
+const SERAPH_SLUGS = ["reve-seraph-mint-green", "reve-seraph-silver-white", "reve-seraph-silver-black"];
+const EARBUD_SLUGS = [...FLORA_SLUGS, ...SERAPH_SLUGS];
 const APPAREL_SLUGS = ["reve-cult-tshirt"];
 const ACCESSORY_SLUGS = ["mini-luxe-case-bag"];
 
@@ -33,12 +34,6 @@ const COLLECTIONS = [
 ];
 
 const bySlug = (slugs) => slugs.map((s) => getProductBySlug(s)).filter(Boolean);
-
-function chunk(arr, size) {
-  const rows = [];
-  for (let i = 0; i < arr.length; i += size) rows.push(arr.slice(i, i + size));
-  return rows;
-}
 
 // Scroll-reveal — gentle, no bounce.
 const gridVariants = {
@@ -84,7 +79,7 @@ function EditorialBanner() {
   );
 }
 
-// A grid row of up to 3 cards — used only for the earbuds collection.
+// A grid row of up to 3 cards — used for the REVE SERAPH row (3 products).
 function ProductRow({ products }) {
   return (
     <motion.div
@@ -93,27 +88,6 @@ function ProductRow({ products }) {
       initial="hidden"
       whileInView="show"
       viewport={{ once: true, amount: 0.15 }}
-    >
-      {products.map((p, i) => (
-        <motion.div key={p.id} variants={cardVariants}>
-          <ProductCard product={p} index={i} />
-        </motion.div>
-      ))}
-    </motion.div>
-  );
-}
-
-// A leftover row of 1–2 earbud cards, centered so it doesn't trail off
-// left-aligned when the count doesn't divide evenly into 3.
-function LeftoverRow({ products }) {
-  const widthClass = products.length === 1 ? "max-w-xs sm:max-w-sm" : "max-w-xl";
-  return (
-    <motion.div
-      className={`grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 mx-auto ${widthClass}`}
-      variants={gridVariants}
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.3 }}
     >
       {products.map((p, i) => (
         <motion.div key={p.id} variants={cardVariants}>
@@ -171,7 +145,11 @@ export default function Shop() {
       setActiveCollection("accessories");
   }, [categoryParam]);
 
-  const earbuds = useMemo(() => bySlug(EARBUD_SLUGS), []);
+  // Split into the two fixed earbud rows (REVE FLORA, then REVE SERAPH)
+  // instead of one combined list auto-chunked into rows of 3 — the row
+  // membership is now fixed by collection, not by however many items fit.
+  const floraEarbuds = useMemo(() => bySlug(FLORA_SLUGS), []);
+  const seraphEarbuds = useMemo(() => bySlug(SERAPH_SLUGS), []);
   const apparel = useMemo(() => bySlug(APPAREL_SLUGS), []);
   const accessories = useMemo(() => bySlug(ACCESSORY_SLUGS), []);
 
@@ -191,23 +169,23 @@ export default function Shop() {
     return true;
   };
 
-  const visibleEarbuds = earbuds.filter(matches);
+  const visibleFlora = floraEarbuds.filter(matches);
+  const visibleSeraph = seraphEarbuds.filter(matches);
   const visibleApparel = apparel.filter(matches);
   const visibleAccessories = accessories.filter(matches);
 
-  const showEarbuds = (activeCollection === "all" || activeCollection === "earbuds") && visibleEarbuds.length > 0;
+  const visibleEarbudsCount = visibleFlora.length + visibleSeraph.length;
+  const showEarbuds = (activeCollection === "all" || activeCollection === "earbuds") && visibleEarbudsCount > 0;
+  const showFloraRow = showEarbuds && visibleFlora.length > 0;
+  const showSeraphRow = showEarbuds && visibleSeraph.length > 0;
   const showApparel = (activeCollection === "all" || activeCollection === "apparel") && visibleApparel.length > 0;
   const showAccessories =
     (activeCollection === "all" || activeCollection === "accessories") && visibleAccessories.length > 0;
 
   const totalVisible =
-    (showEarbuds ? visibleEarbuds.length : 0) +
+    (showEarbuds ? visibleEarbudsCount : 0) +
     (showApparel ? visibleApparel.length : 0) +
     (showAccessories ? visibleAccessories.length : 0);
-
-  const earbudRows = chunk(visibleEarbuds, 3);
-  const earbudFullRows = earbudRows.filter((r) => r.length === 3);
-  const earbudLeftover = earbudRows.find((r) => r.length < 3) || [];
 
   // Only insert the editorial banner in the unfiltered, full-catalog view,
   // between the earbuds collection and the Apparel feature — a filtered
@@ -287,24 +265,22 @@ export default function Shop() {
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="space-y-16 lg:space-y-20"
           >
-            {/* Earbuds — collection grid */}
+            {/* Earbuds — Row 1: REVE FLORA, Row 2: REVE SERAPH */}
             {showEarbuds && (
               <div className="space-y-6 lg:space-y-8">
-                {earbudFullRows.map((row, i) => (
-                  <ProductRow key={i} products={row} />
-                ))}
-                {earbudLeftover.length > 0 && <LeftoverRow products={earbudLeftover} />}
+                {showFloraRow && <ProductRow products={visibleFlora} />}
+                {showSeraphRow && <ProductRow products={visibleSeraph} />}
               </div>
             )}
 
             {showBanner && <EditorialBanner />}
 
-            {/* Apparel — large editorial feature */}
+            {/* Apparel — Row 3: large editorial feature (REVE CULT T-Shirt) */}
             {showApparel && (
               <FeaturedSection eyebrow="Collection" title="Lifestyle Apparel" product={visibleApparel[0]} />
             )}
 
-            {/* Accessories — large editorial feature */}
+            {/* Accessories — Row 4: large editorial feature (Carry Pouch) */}
             {showAccessories && (
               <FeaturedSection eyebrow="Collection" title="Accessories" product={visibleAccessories[0]} />
             )}
