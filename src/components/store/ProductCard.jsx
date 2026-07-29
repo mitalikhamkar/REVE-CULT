@@ -50,8 +50,8 @@ export default function ProductCard({ product, index = 0 }) {
         style={{ animationDelay: `${index * 0.08}s`, opacity: 0 }}
       >
         <div
-          className="relative flex flex-col h-full overflow-hidden rounded-[22px] bg-card border border-border/30 group-hover:border-border/50 transition-all duration-500 ease-out group-hover:-translate-y-1.5"
-          style={{ boxShadow: "0 2px 10px -6px rgba(38,30,20,0.10)" }}
+          className="relative flex flex-col h-full overflow-hidden rounded-[22px] border border-border/30 group-hover:border-border/50 transition-all duration-500 ease-out group-hover:-translate-y-1.5"
+          style={{ backgroundColor: "rgba(252, 186, 203, 0.12)", boxShadow: "0 2px 10px -6px rgba(38,30,20,0.10)" }}
           onMouseEnter={(e) => {
             e.currentTarget.style.boxShadow = "0 26px 48px -24px rgba(38,30,20,0.28)";
           }}

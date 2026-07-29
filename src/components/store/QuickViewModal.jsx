@@ -1,4 +1,3 @@
-//QuickViewModal.jsx
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
@@ -23,6 +22,7 @@ import {
 } from "lucide-react";
 import { PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
+import { formatPrice } from "@/lib/formatPrice";
 
 const SPOTLIGHT_DELAY = 450;
 const SCAN_DURATION = 1600;
@@ -346,11 +346,11 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                 initial="hidden"
                 animate="show"
               >
-                <motion.p variants={itemVariants} className="text-[11px] uppercase tracking-wider text-muted-foreground mb-1.5">
+                <motion.p variants={itemVariants} className="product-collection-label mb-1.5">
                   {activeProduct.collection}
                 </motion.p>
 
-                <motion.h2 variants={itemVariants} className="text-xl sm:text-2xl font-heading font-light leading-snug pr-8">
+                <motion.h2 variants={itemVariants} className="product-title pr-8">
                   {activeProduct.name}
                 </motion.h2>
 
@@ -377,8 +377,8 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                   )}
                 </motion.div>
 
-                <motion.p variants={itemVariants} className="text-xl font-heading font-semibold mt-2">
-                  ₹{activeProduct.price}
+                <motion.p variants={itemVariants} className="product-price mt-2">
+                  {formatPrice(activeProduct.price)}
                 </motion.p>
 
                 {activeProduct.tagline && (
