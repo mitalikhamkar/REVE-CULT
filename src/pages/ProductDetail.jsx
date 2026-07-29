@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { Heart, ShoppingBag, Check, Minus, Plus, ChevronRight, ShieldCheck } from "lucide-react";
 import { getProductBySlug, PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
+import { formatPrice } from "@/lib/formatPrice";
 import TrustBadges from "@/components/store/TrustBadges";
 import TouchControlCanvas from "@/components/store/TouchControlCanvas";
 import ReviewSection from "@/components/store/ReviewSection";
@@ -81,11 +82,24 @@ export default function ProductDetail() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Visual story — left */}
           <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
-            <div className="relative overflow-hidden rounded-3xl halo-bg group">
+            {/* Luxury showcase container — soft warm blush background instead
+                of flat white, generous padding so the product doesn't sit
+                edge-to-edge, rounded corners + a subtle ambient shadow to
+                match the Homepage/Shop card treatment. Gallery component and
+                its swipe/switch behavior are untouched — only the container
+                styling and the image's object-fit (cover -> contain, so the
+                background is actually visible around the product) changed. */}
+            <div
+              className="relative overflow-hidden rounded-[28px] group p-6 sm:p-10"
+              style={{
+                background: "linear-gradient(160deg, #FFF9F7 0%, #FDF6F4 100%)",
+                boxShadow: "0 24px 56px -32px rgba(120,80,70,0.22), inset 0 1px 0 rgba(255,255,255,0.7)",
+              }}
+            >
               <ProductImageGallery
                 images={galleryImages}
                 alt={`${product.name} — ${product.color}`}
-                imgClassName="w-full aspect-square object-cover"
+                imgClassName="w-full aspect-square object-contain"
               />
               {product.has_anc && (
                 <span className="absolute top-4 right-4 z-10 bg-gold text-white text-[10px] font-semibold px-3 py-1 rounded-full">
@@ -102,15 +116,15 @@ export default function ProductDetail() {
 
           {/* Product info — right */}
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-blush mb-2">{product.collection}</p>
-            <h1 className="text-3xl lg:text-4xl font-heading font-light leading-tight mb-3">{product.name}</h1>
+            <p className="product-collection-label mb-1.5">{product.collection}</p>
+            <h1 className="product-title mb-3">{product.name}</h1>
             {product.tagline && (
               <p className="text-base text-muted-foreground italic mb-4">"{product.tagline}"</p>
             )}
 
             {/* Rating */}
             <div className="flex items-center gap-3 mb-5">
-              <span className="text-2xl font-heading font-semibold">₹{product.price}</span>
+              <span className="product-price">{formatPrice(product.price)}</span>
               <span className="text-xs text-muted-foreground">No reviews yet</span>
             </div>
 
