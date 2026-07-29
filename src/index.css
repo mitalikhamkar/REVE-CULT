@@ -491,3 +491,11 @@
   .product-title { font-size: 1.125rem; } /* 18px */
   .product-price { font-size: 0.9375rem; } /* 15px */
 }
+/* --- About page: closing section slow background zoom --- */
+.about-closing-zoom {
+  animation: aboutClosingZoom 18s ease-in-out infinite alternate;
+}
+@keyframes aboutClosingZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
