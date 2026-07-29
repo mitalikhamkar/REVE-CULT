@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Heart, ShoppingBag, Check, Minus, Plus, ChevronRight, ShieldCheck } from "lucide-react";
+import { Heart, ShoppingBag, Check, Minus, Plus, ShieldCheck } from "lucide-react";
 import { getProductBySlug, PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
 import { formatPrice } from "@/lib/formatPrice";
@@ -68,17 +68,6 @@ export default function ProductDetail() {
       {showRitual && <RitualLoader onDone={() => setShowRitual(false)} />}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-1.5 text-xs text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-foreground">Home</Link>
-          <ChevronRight size={12} />
-          <Link to="/shop" className="hover:text-foreground">Shop</Link>
-          <ChevronRight size={12} />
-          <Link to={`/shop?category=${encodeURIComponent(product.category)}`} className="hover:text-foreground">{product.category}</Link>
-          <ChevronRight size={12} />
-          <span className="text-foreground truncate">{product.name}</span>
-        </nav>
-
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Visual story — left */}
           <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
