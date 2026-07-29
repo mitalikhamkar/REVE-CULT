@@ -39,6 +39,7 @@ import AdminCustomerDetail from '@/pages/admin/CustomerDetail';
 import AdminProducts from '@/pages/admin/Products';
 import AdminFeedback from '@/pages/admin/Feedback';
 import AdminUsers from '@/pages/admin/Users';
+import ChatWidget from '@/components/ChatWidget';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth } = useAuth();
@@ -112,6 +113,7 @@ function App() {
             <AuthenticatedApp />
           </Router>
           <Toaster />
+          <ChatWidget />
         </QueryClientProvider>
       </StoreProvider>
     </AuthProvider>

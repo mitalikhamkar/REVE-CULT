@@ -552,3 +552,25 @@
   0% { transform: translateX(-2%); }
   100% { transform: translateX(2%); }
 }
+/* --- Global floating chat widget --- */
+.chat-fab-float { animation: chatFabFloat 4s ease-in-out infinite; }
+@keyframes chatFabFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+.chat-fab-glow {
+  transition: box-shadow 0.3s ease;
+}
+.chat-fab-glow:hover {
+  box-shadow: 0 8px 28px hsl(var(--blush) / 0.35);
+}
+.chat-fab-pulse { animation: chatFabPulse 2s ease-in-out infinite; }
+@keyframes chatFabPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.5; }
+}
+.chat-typing-dot { animation: chatTypingDot 1.2s ease-in-out infinite; }
+@keyframes chatTypingDot {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-3px); }
+}
