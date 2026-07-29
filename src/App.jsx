@@ -40,6 +40,8 @@ import AdminProducts from '@/pages/admin/Products';
 import AdminFeedback from '@/pages/admin/Feedback';
 import AdminUsers from '@/pages/admin/Users';
 import ChatWidget from '@/components/ChatWidget';
+import { PackingAnimationProvider } from "@/context/PackingAnimationContext";
+import AddToCartPackagingOverlay from "@/components/store/AddToCartPackagingOverlay";
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth } = useAuth();
@@ -58,47 +60,50 @@ const AuthenticatedApp = () => {
   }
 
   return (
-    <Routes>
-      {/* Auth routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+    <PackingAnimationProvider>
+      <Routes>
+        {/* Auth routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
-      {/* App routes */}
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/product/:slug" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/support" element={<Support />} />
-        <Route path="/order-confirmation" element={<OrderConfirmation />} />
-        <Route path="/signature-box" element={<SignatureBox />} />
+        {/* App routes */}
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/shop" element={<Shop />} />
+          <Route path="/product/:slug" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/support" element={<Support />} />
+          <Route path="/order-confirmation" element={<OrderConfirmation />} />
+          <Route path="/signature-box" element={<SignatureBox />} />
 
-        <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/checkout" element={<Checkout />} />
+          </Route>
         </Route>
-      </Route>
 
-      {/* Admin routes — separate layout, admin-only access */}
-      <Route element={<AdminRoute />}>
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="orders/:id" element={<AdminOrderDetail />} />
-          <Route path="customers" element={<AdminCustomers />} />
-          <Route path="customers/:id" element={<AdminCustomerDetail />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="feedback" element={<AdminFeedback />} />
-          <Route path="users" element={<AdminUsers />} />
+        {/* Admin routes — separate layout, admin-only access */}
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="orders" element={<AdminOrders />} />
+            <Route path="orders/:id" element={<AdminOrderDetail />} />
+            <Route path="customers" element={<AdminCustomers />} />
+            <Route path="customers/:id" element={<AdminCustomerDetail />} />
+            <Route path="products" element={<AdminProducts />} />
+            <Route path="feedback" element={<AdminFeedback />} />
+            <Route path="users" element={<AdminUsers />} />
+          </Route>
         </Route>
-      </Route>
 
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
+      <AddToCartPackagingOverlay />
+    </PackingAnimationProvider>
   );
 };
 

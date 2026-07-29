@@ -23,6 +23,7 @@ import {
 import { PRODUCTS } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
 import { formatPrice } from "@/lib/formatPrice";
+import { usePackingAnimation } from "@/context/PackingAnimationContext";
 
 const SPOTLIGHT_DELAY = 450;
 const SCAN_DURATION = 1600;
@@ -59,7 +60,8 @@ const itemVariants = {
 };
 
 export default function QuickViewModal({ product, onClose, originPoint }) {
-  const { addToCart, toggleWishlist, isInWishlist } = useStore();
+  const { toggleWishlist, isInWishlist } = useStore();
+  const { triggerPackingAnimation } = usePackingAnimation();
   const [activeSlug, setActiveSlug] = useState(product.slug);
   const [quantity, setQuantity] = useState(1);
   const [imgIndex, setImgIndex] = useState(0);
@@ -72,10 +74,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
   const siblings = PRODUCTS.filter((p) => p.collection === product.collection && p.color);
   const wishlisted = isInWishlist(activeProduct.id);
 
-  // Hamper products lead with the hamper (box) photo, then the second
-  // hamper angle, then the standalone earbuds shot — a small manual
-  // gallery, no auto-rotate. Non-hamper products (T-shirt, standalone
-  // pouch) keep their existing gallery_urls behaviour untouched.
   const gallery = activeProduct.is_hamper
     ? [activeProduct.hamper_image_url, activeProduct.hamper_other_image_url, activeProduct.image_url].filter(Boolean)
     : activeProduct.gallery_urls && activeProduct.gallery_urls.length > 0
@@ -149,11 +147,12 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
 
   const handleAddToCart = () => {
     if (phase !== "revealed") return;
-    addToCart(activeProduct, quantity);
     setPhase("success");
-    const t1 = setTimeout(() => setPhase("flying"), SUCCESS_HOLD);
-    const t2 = setTimeout(() => onClose && onClose(), SUCCESS_HOLD + FLY_DURATION);
-    timers.current.push(t1, t2);
+    const t1 = setTimeout(() => {
+      triggerPackingAnimation(activeProduct, quantity);
+      onClose && onClose();
+    }, SUCCESS_HOLD);
+    timers.current.push(t1);
   };
 
   const goPrev = () => setImgIndex((i) => (i - 1 + gallery.length) % gallery.length);
@@ -222,10 +221,6 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
               transition={{ duration: 0.6, ease: "easeOut" }}
             />
 
-            {/* Image stage — larger and always centered, so the product
-                reads as the hero the instant Quick View opens, the way a
-                premium product gallery (Apple/Nothing/Dyson-style) would
-                present it. */}
             <div
               ref={imageStageRef}
               onMouseMove={handleMouseMove}

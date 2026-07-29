@@ -11,14 +11,17 @@ import DemoVideoSection from "@/components/store/DemoVideoSection";
 import RitualLoader from "@/components/store/RitualLoader";
 import ProductCard from "@/components/store/ProductCard";
 import ProductImageGallery from "@/components/store/ProductImageGallery";
+import { usePackingAnimation } from "@/context/PackingAnimationContext";
 
 export default function ProductDetail() {
   const { slug } = useParams();
   const product = getProductBySlug(slug);
-  const { addToCart, toggleWishlist, isInWishlist, addToRecentlyViewed } = useStore();
+  const { toggleWishlist, isInWishlist, addToRecentlyViewed } = useStore();
+  const { triggerPackingAnimation } = usePackingAnimation();
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
+  const [added, setAdded] = useState(false); // no longer set, safe to leave or remove
   const [showRitual, setShowRitual] = useState(false);
+
 
   useEffect(() => {
     setQuantity(1);
@@ -58,9 +61,7 @@ export default function ProductDetail() {
       : [product.image_url];
 
   const handleAddToCart = () => {
-    addToCart(product, quantity);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+    triggerPackingAnimation(product, quantity);
   };
 
   return (

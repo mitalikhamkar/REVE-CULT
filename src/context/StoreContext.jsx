@@ -36,7 +36,7 @@ export function StoreProvider({ children }) {
   useEffect(() => { localStorage.setItem(RECENT_KEY, JSON.stringify(recentlyViewed)); }, [recentlyViewed]);
   useEffect(() => { localStorage.setItem(COMPARE_KEY, JSON.stringify(compareList)); }, [compareList]);
 
-  const addToCart = useCallback((product, quantity = 1) => {
+const addToCart = useCallback((product, quantity = 1, options = {}) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.product_id === product.id);
       if (existing) {
@@ -55,9 +55,6 @@ export function StoreProvider({ children }) {
           product_price: product.price,
           color: product.color,
           quantity,
-          // Signature Box fields — undefined/null for ordinary products,
-          // so this stays backward compatible with everything already
-          // going through addToCart.
           type: product.type || "product",
           earbuds: product.earbuds || null,
           pouch: product.pouch || null,
@@ -69,9 +66,11 @@ export function StoreProvider({ children }) {
     setCartPulse(true);
     setTimeout(() => setCartPulse(false), 1600);
 
-    // NEW — fire the premium "Added to Cart" toast for every add-to-cart,
-    // from any card, page, or the Signature Box, without touching the
-    // callers of addToCart.
+    // Skip the toast when the caller already showed its own confirmation
+    // (e.g. the Add to Cart packaging animation) — avoids a redundant
+    // "Added to Cart" popping up right after that sequence finishes.
+    if (options.suppressToast) return;
+
     setCartToast({
       visible: true,
       product: {

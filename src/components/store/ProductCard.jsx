@@ -2,23 +2,23 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Check, Eye } from "lucide-react";
 import { useStore } from "@/context/StoreContext";
+import { usePackingAnimation } from "@/context/PackingAnimationContext";
 import QuickViewModal from "@/components/store/QuickViewModal";
 import ProductImageGallery from "@/components/store/ProductImageGallery";
 import { formatPrice } from "@/lib/formatPrice";
 
 export default function ProductCard({ product, index = 0 }) {
-  const { addToCart, toggleWishlist, isInWishlist } = useStore();
+  const { toggleWishlist, isInWishlist } = useStore();
+  const { triggerPackingAnimation } = usePackingAnimation();
   const [added, setAdded] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
-  const [wishPulse, setWishPulse] = useState(false); // micro-animation on wishlist toggle
+  const [wishPulse, setWishPulse] = useState(false);
   const wishlisted = isInWishlist(product.id);
 
   const handleAddToCart = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    addToCart(product, 1);
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
+    triggerPackingAnimation(product, 1);
   };
 
   const handleWishlist = (e) => {

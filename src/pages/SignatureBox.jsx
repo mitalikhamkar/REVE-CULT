@@ -5,8 +5,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 import { PRODUCTS, getProductBySlug } from "@/data/products";
 import { useStore } from "@/context/StoreContext";
-import GiftBoxVisual from "@/components/store/GiftBoxVisual";
-import SignatureBoxPackingOverlay from "@/components/store/SignatureBoxPackingOverlay";
+import { usePackingAnimation } from "@/context/PackingAnimationContext";
+import PackagingHamperVisual from "@/components/store/PackagingHamperVisual";
+import { HAMPER_ACCESSORIES } from "@/data/hamperAssets";
 
 const EARBUD_OPTIONS = PRODUCTS.filter((p) => p.category.toLowerCase().includes("earbuds"));
 const CARRY_POUCH = PRODUCTS.find((p) => p.id === "p2");
@@ -20,13 +21,9 @@ const MESSAGE_SUGGESTIONS = [
 ];
 
 export default function SignatureBox() {
-  const { addToCart } = useStore();
-  const navigate = useNavigate();
+  const { triggerPackingAnimation } = usePackingAnimation();
   const [searchParams] = useSearchParams();
 
-  // Pre-select from ?earbud=<slug> (set by the "Gift this Hamper" CTA in
-  // Quick View) — falls back to the first earbud option when absent or
-  // when the slug doesn't match a known product.
   const earbudParam = searchParams.get("earbud");
   const initialEarbud = getProductBySlug(earbudParam);
   const initialId =
@@ -37,10 +34,7 @@ export default function SignatureBox() {
   const [selectedId, setSelectedId] = useState(initialId);
   const [giftFor, setGiftFor] = useState(null);
   const [message, setMessage] = useState("");
-  const [showPacking, setShowPacking] = useState(false);
 
-  // If the query param changes after mount (e.g. navigating here again
-  // from a different Quick View), sync the selection to match.
   useEffect(() => {
     if (initialEarbud && EARBUD_OPTIONS.some((p) => p.id === initialEarbud.id)) {
       setSelectedId(initialEarbud.id);
@@ -55,13 +49,13 @@ export default function SignatureBox() {
 
   const totalPrice = (selectedEarbuds?.price || 0) + (CARRY_POUCH?.price || 0);
 
-  const handlePackingComplete = () => {
-    const hamperImage = selectedEarbuds?.hamper_image_url || selectedEarbuds?.image_url;
-    addToCart(
+  const handleAddToCart = () => {
+    triggerPackingAnimation(
       {
         id: `signature-box-${selectedEarbuds.id}`,
         name: "REVE CULT Signature Box",
-        image_url: hamperImage,
+        image_url: selectedEarbuds?.image_url,
+        hamper_image_url: selectedEarbuds?.hamper_image_url || selectedEarbuds?.image_url,
         price: totalPrice,
         type: "signature-box",
         earbuds: { name: selectedEarbuds.name },
@@ -71,7 +65,6 @@ export default function SignatureBox() {
       },
       1
     );
-    navigate("/cart");
   };
 
   return (
@@ -81,7 +74,7 @@ export default function SignatureBox() {
           <p className="text-xs uppercase tracking-[0.2em] text-blush mb-2">Premium Gifting</p>
           <h1 className="text-3xl lg:text-5xl font-heading font-light mb-4">Create Your Signature Box</h1>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto leading-relaxed">
-            Choose your favourite REVE CULT earbuds and we'll package them inside our premium signature gift box.
+            Choose your favourite REVE CULT earbuds and we'll package them inside our premium signature hamper.
           </p>
         </div>
 
@@ -96,11 +89,11 @@ export default function SignatureBox() {
                 boxShadow: "0 30px 70px -40px rgba(196,120,120,0.26)",
               }}
             >
-              <GiftBoxVisual
-                mode="builder"
-                earbudsImage={selectedEarbuds?.image_url}
-                earbudsAlt={selectedEarbuds?.name}
-                pouchImage={CARRY_POUCH?.image_url}
+              <PackagingHamperVisual
+                productImage={selectedEarbuds?.hamper_image_url || selectedEarbuds?.image_url}
+                productAlt={selectedEarbuds?.name}
+                accessories={HAMPER_ACCESSORIES}
+                playing={false}
                 size="large"
               />
               <p className="text-xs text-muted-foreground mt-6 text-center">
@@ -244,7 +237,7 @@ export default function SignatureBox() {
                 Continue Shopping
               </Link>
               <button
-                onClick={() => setShowPacking(true)}
+                onClick={handleAddToCart}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-blush text-white rounded-full text-sm font-medium hover:bg-blush/90 transition-all hover:scale-[1.01] min-h-[48px]"
               >
                 <ShoppingBag size={16} />
@@ -254,17 +247,6 @@ export default function SignatureBox() {
           </div>
         </div>
       </div>
-
-      <AnimatePresence>
-        {showPacking && (
-          <SignatureBoxPackingOverlay
-            earbudsImage={selectedEarbuds?.image_url}
-            earbudsAlt={selectedEarbuds?.name}
-            pouchImage={CARRY_POUCH?.image_url}
-            onComplete={handlePackingComplete}
-          />
-        )}
-      </AnimatePresence>
     </section>
   );
 }

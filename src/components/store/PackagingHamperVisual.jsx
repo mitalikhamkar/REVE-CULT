@@ -1,0 +1,204 @@
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+export default function PackagingHamperVisual({
+  productImage,
+  productAlt = "Selected product",
+  productLayoutId,
+  accessories = [], // [{ key, image_url, label }]
+  playing = false,
+  reducedMotion = false,
+  onComplete,
+  size = "large",
+}) {
+  const boxSize = size === "large" ? "w-72 h-56 sm:w-96 sm:h-72" : "w-56 h-44 sm:w-72 sm:h-56";
+
+  const totalItemSteps = 1 + accessories.length;
+  const settleStep = totalItemSteps + 1;
+  const closeStep = totalItemSteps + 2;
+  const logoStep = totalItemSteps + 3;
+
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    if (!playing) {
+      setStep(0);
+      return;
+    }
+
+    if (reducedMotion) {
+      setStep(closeStep);
+      const t = setTimeout(() => {
+        setStep(logoStep);
+        setTimeout(() => onComplete && onComplete(), 450);
+      }, 400);
+      return () => clearTimeout(t);
+    }
+
+    setStep(0);
+    const timers = [];
+    const STEP_MS = 850;
+    for (let i = 1; i <= totalItemSteps; i++) {
+      timers.push(setTimeout(() => setStep(i), i * STEP_MS));
+    }
+    const settleAt = totalItemSteps * STEP_MS + 500;
+    timers.push(setTimeout(() => setStep(settleStep), settleAt));
+    const closeAt = settleAt + 900;
+    timers.push(setTimeout(() => setStep(closeStep), closeAt));
+    const logoAt = closeAt + 1000;
+    timers.push(setTimeout(() => setStep(logoStep), logoAt));
+    timers.push(setTimeout(() => onComplete && onComplete(), logoAt + 900));
+
+    return () => timers.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, reducedMotion]);
+
+  const isClosed = step >= closeStep;
+  const showLogo = step >= logoStep;
+
+  const springSoft = { type: "spring", stiffness: 120, damping: 18 };
+  const springSettle = { type: "spring", stiffness: 90, damping: 16 };
+
+  return (
+    <div className={"relative mx-auto " + boxSize}>
+      {/* Ground shadow */}
+      <div
+        className="absolute left-1/2 bottom-[-8%] w-[68%] h-[12%] rounded-full pointer-events-none"
+        style={{
+          transform: "translateX(-50%)",
+          background: "radial-gradient(ellipse at center, rgba(30,18,10,0.32) 0%, transparent 72%)",
+          filter: "blur(14px)",
+        }}
+      />
+
+      <motion.div
+        className="relative w-full h-full"
+        animate={{ scale: isClosed ? 1 : 1.015 }}
+        transition={springSoft}
+      >
+        {/* OPEN HAMPER — warm tan/terracotta interior */}
+        <AnimatePresence>
+          {!isClosed && (
+            <motion.div
+              key="hamper-open"
+              className="absolute inset-0 rounded-[28px] overflow-hidden"
+              style={{
+                background:
+                  "linear-gradient(165deg, hsl(30 35% 88%) 0%, hsl(25 40% 76%) 55%, hsl(20 45% 62%) 100%)",
+                boxShadow: "0 28px 50px -22px rgba(60,35,15,0.42), inset 0 2px 0 rgba(255,255,255,0.35)",
+              }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.01 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {/* Interior well */}
+              <div
+                className="absolute inset-[7%] rounded-2xl"
+                style={{
+                  background: "linear-gradient(180deg, hsl(35 45% 95%) 0%, hsl(28 30% 87%) 100%)",
+                  boxShadow: "inset 0 5px 12px rgba(80,50,25,0.2)",
+                }}
+              />
+
+              {/* Product compartment */}
+              <div className="absolute inset-x-0 top-[18%] flex items-center justify-center">
+                <AnimatePresence>
+                  {step >= 1 && productImage && (
+                    <motion.img
+                      key="product"
+                      layoutId={productLayoutId}
+                      src={productImage}
+                      alt={productAlt}
+                      draggable={false}
+                      className="w-20 h-20 sm:w-28 sm:h-28 object-contain drop-shadow-xl"
+                      initial={{ opacity: 0, scale: 0.85, y: -10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={springSoft}
+                    />
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Accessory row */}
+              <div className="absolute inset-x-0 bottom-[13%] flex items-end justify-center gap-2.5 sm:gap-3.5">
+                {accessories.map((acc, idx) => {
+                  const accStep = idx + 2;
+                  return (
+                    <AnimatePresence key={acc.key}>
+                      {step >= accStep && (
+                        <motion.img
+                          src={acc.image_url}
+                          alt={acc.label || acc.key}
+                          draggable={false}
+                          className="w-8 h-8 sm:w-11 sm:h-11 object-contain drop-shadow-md"
+                          initial={{ opacity: 0, y: -14, scale: 0.85 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -14, scale: 0.85 }}
+                          transition={{ ...springSoft, delay: 0.05 }}
+                        />
+                      )}
+                    </AnimatePresence>
+                  );
+                })}
+              </div>
+
+              {step >= settleStep && (
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background:
+                      "linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%)",
+                  }}
+                  initial={{ x: "-120%" }}
+                  animate={{ x: "120%" }}
+                  transition={{ duration: 1.1, ease: "easeInOut" }}
+                />
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* CLOSED HAMPER — matte chocolate-brown lid, no ribbon */}
+        <AnimatePresence>
+          {isClosed && (
+            <motion.div
+              key="hamper-closed"
+              className="absolute inset-0 rounded-[28px] overflow-hidden flex items-center justify-center"
+              style={{
+                background:
+                  "linear-gradient(155deg, hsl(25 35% 42%) 0%, hsl(20 40% 30%) 45%, hsl(15 45% 20%) 100%)",
+                boxShadow: "0 28px 50px -22px rgba(30,18,10,0.5), inset 0 2px 0 rgba(255,255,255,0.1)",
+                transformOrigin: "top",
+              }}
+              initial={{ opacity: 0, scaleY: 0.85 }}
+              animate={{ opacity: 1, scaleY: 1 }}
+              transition={springSettle}
+            >
+              {/* Hinge seam */}
+              <div
+                className="absolute inset-x-[8%] top-[30%] h-px"
+                style={{ background: "rgba(255,255,255,0.1)" }}
+              />
+              <AnimatePresence>
+                {showLogo && (
+                  <motion.p
+                    key="wordmark"
+                    className="absolute left-1/2 top-[62%] -translate-x-1/2 -translate-y-1/2 text-[10px] sm:text-xs tracking-[0.28em] font-heading uppercase whitespace-nowrap"
+                    style={{ color: "rgba(243,233,223,0.85)" }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                  >
+                    REVE CULT
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </div>
+  );
+}
