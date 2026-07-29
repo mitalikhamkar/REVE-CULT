@@ -1,7 +1,6 @@
 import React, { useState, useRef } from "react";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Phone, Clock, MapPin, Send, Plus, Minus, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Mail, Phone, Clock, MapPin, Send, Plus, Minus, ArrowRight, ArrowUpRight, Headphones, Sparkles, MessageCircle } from "lucide-react";
 import { entities } from "@/api/entities";
 
 const SUPPORT_EMAIL = "support@revecult.com";
@@ -176,12 +175,6 @@ export default function Support() {
 
   return (
     <div className="overflow-x-hidden">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 text-xs text-muted-foreground">
-        <Link to="/" className="hover:text-foreground">Home</Link>
-        <span className="mx-1">/</span>
-        <span className="text-foreground">Support</span>
-      </nav>
-
       {/* Hero */}
       <section className="relative overflow-hidden py-20 lg:py-32">
         <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-blush/10 blur-3xl animate-float" />
@@ -211,35 +204,45 @@ export default function Support() {
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.9, delay: 0.2 }}
-            className="relative flex justify-center animate-float"
+            className="relative flex justify-center"
           >
-            <svg viewBox="0 0 340 380" className="w-64 sm:w-80" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <radialGradient id="supportHaloGrad" cx="50%" cy="42%" r="60%">
-                  <stop offset="0%" stopColor="hsl(13 49% 71% / 0.32)" />
-                  <stop offset="100%" stopColor="hsl(13 49% 71% / 0)" />
-                </radialGradient>
-                <linearGradient id="supportFigureGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(13 49% 71%)" />
-                  <stop offset="100%" stopColor="hsl(150 18% 55%)" />
-                </linearGradient>
-              </defs>
-              <circle cx="170" cy="170" r="160" fill="url(#supportHaloGrad)" />
-              <circle cx="170" cy="118" r="48" fill="url(#supportFigureGrad)" opacity="0.9" />
-              <path d="M105 360 C105 262 235 262 235 360 Z" fill="url(#supportFigureGrad)" opacity="0.85" />
-              <circle cx="207" cy="120" r="9" fill="white" stroke="hsl(var(--blush))" strokeWidth="2" />
-              <circle cx="132" cy="120" r="9" fill="white" stroke="hsl(var(--blush))" strokeWidth="2" />
-              {[...Array(5)].map((_, i) => (
-                <circle
-                  key={i}
-                  cx={50 + i * 55}
-                  cy={30 + (i % 3) * 26}
-                  r={3 + (i % 2)}
-                  fill="hsl(var(--gold))"
-                  opacity="0.55"
-                />
-              ))}
-            </svg>
+            {/* Soft glow backdrop */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-72 h-72 sm:w-80 sm:h-80 rounded-full bg-gradient-to-br from-blush/25 via-blush/10 to-sage/20 blur-2xl" />
+            </div>
+
+            {/* Floating sparkle accents */}
+            <motion.span
+              className="absolute top-6 left-8 text-gold"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <Sparkles size={18} strokeWidth={1.5} />
+            </motion.span>
+            <motion.span
+              className="absolute bottom-16 right-4 text-sage"
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+            >
+              <Sparkles size={14} strokeWidth={1.5} />
+            </motion.span>
+
+            {/* Main illustration: a support agent, headset front and center */}
+            <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full bg-white/70 backdrop-blur-sm border border-white shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] flex items-center justify-center animate-float">
+              <div className="w-40 h-40 sm:w-44 sm:h-44 rounded-full bg-gradient-to-br from-blush to-sage flex items-center justify-center">
+                <Headphones size={64} className="text-white" strokeWidth={1.25} />
+              </div>
+
+              {/* Chat bubble badge, ties the illustration to the live chat feature */}
+              <motion.div
+                className="absolute -bottom-2 -right-2 w-14 h-14 rounded-full bg-white shadow-lg border border-border flex items-center justify-center"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.8, type: "spring" }}
+              >
+                <MessageCircle size={22} className="text-blush" strokeWidth={1.5} />
+              </motion.div>
+            </div>
           </motion.div>
         </div>
       </section>
