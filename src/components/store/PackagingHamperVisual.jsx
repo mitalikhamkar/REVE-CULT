@@ -1,11 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { HAMPER_LOGO_URL } from "@/data/hamperAssets";
+
+// Per-accessory entrance variants — each one reads as a distinct,
+// deliberate placement rather than a generic "fade + pop" repeated
+// four times.
+const ACCESSORY_VARIANTS = {
+  fade: {
+    initial: { opacity: 0, y: 10, scale: 0.92 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -8, scale: 0.92 },
+    transition: { type: "spring", stiffness: 140, damping: 20 },
+  },
+  slide: {
+    initial: { opacity: 0, x: 26, rotate: -8 },
+    animate: { opacity: 1, x: 0, rotate: 0 },
+    exit: { opacity: 0, x: 18, rotate: -6 },
+    transition: { type: "spring", stiffness: 130, damping: 17 },
+  },
+  bounce: {
+    initial: { opacity: 0, y: -14, scale: 0.8 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -10, scale: 0.85 },
+    transition: { type: "spring", stiffness: 210, damping: 14 },
+  },
+  rise: {
+    initial: { opacity: 0, y: 18, rotate: 6, scale: 0.88 },
+    animate: { opacity: 1, y: 0, rotate: 0, scale: 1 },
+    exit: { opacity: 0, y: 12, rotate: 4, scale: 0.9 },
+    transition: { type: "spring", stiffness: 120, damping: 18 },
+  },
+};
 
 export default function PackagingHamperVisual({
   productImage,
   productAlt = "Selected product",
   productLayoutId,
-  accessories = [], // [{ key, image_url, label }]
+  accessories = [], // [{ key, image_url, label, motion }]
   playing = false,
   reducedMotion = false,
   onComplete,
@@ -37,7 +68,7 @@ export default function PackagingHamperVisual({
 
     setStep(0);
     const timers = [];
-    const STEP_MS = 850;
+    const STEP_MS = 820;
     for (let i = 1; i <= totalItemSteps; i++) {
       timers.push(setTimeout(() => setStep(i), i * STEP_MS));
     }
@@ -45,9 +76,9 @@ export default function PackagingHamperVisual({
     timers.push(setTimeout(() => setStep(settleStep), settleAt));
     const closeAt = settleAt + 900;
     timers.push(setTimeout(() => setStep(closeStep), closeAt));
-    const logoAt = closeAt + 1000;
+    const logoAt = closeAt + 950;
     timers.push(setTimeout(() => setStep(logoStep), logoAt));
-    timers.push(setTimeout(() => onComplete && onComplete(), logoAt + 900));
+    timers.push(setTimeout(() => onComplete && onComplete(), logoAt + 850));
 
     return () => timers.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -76,7 +107,7 @@ export default function PackagingHamperVisual({
         animate={{ scale: isClosed ? 1 : 1.015 }}
         transition={springSoft}
       >
-        {/* OPEN HAMPER — warm tan/terracotta interior */}
+        {/* OPEN HAMPER */}
         <AnimatePresence>
           {!isClosed && (
             <motion.div
@@ -87,11 +118,22 @@ export default function PackagingHamperVisual({
                   "linear-gradient(165deg, hsl(30 35% 88%) 0%, hsl(25 40% 76%) 55%, hsl(20 45% 62%) 100%)",
                 boxShadow: "0 28px 50px -22px rgba(60,35,15,0.42), inset 0 2px 0 rgba(255,255,255,0.35)",
               }}
-              initial={{ opacity: 0, scale: 0.98 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.01 }}
-              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              transition={springSettle}
             >
+              {/* Soft warm glow the instant the lid opens */}
+              <motion.div
+                className="absolute inset-x-0 top-0 h-1/2 pointer-events-none"
+                style={{
+                  background: "radial-gradient(ellipse at 50% 0%, hsl(35 70% 75% / 55%) 0%, transparent 70%)",
+                }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+              />
+
               {/* Interior well */}
               <div
                 className="absolute inset-[7%] rounded-2xl"
@@ -101,7 +143,7 @@ export default function PackagingHamperVisual({
                 }}
               />
 
-              {/* Product compartment */}
+              {/* Product compartment — shared-element flight target */}
               <div className="absolute inset-x-0 top-[18%] flex items-center justify-center">
                 <AnimatePresence>
                   {step >= 1 && productImage && (
@@ -112,19 +154,20 @@ export default function PackagingHamperVisual({
                       alt={productAlt}
                       draggable={false}
                       className="w-20 h-20 sm:w-28 sm:h-28 object-contain drop-shadow-xl"
-                      initial={{ opacity: 0, scale: 0.85, y: -10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      initial={{ opacity: 0, scale: 0.85, filter: "blur(6px)" }}
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
                       exit={{ opacity: 0, scale: 0.9 }}
-                      transition={springSoft}
+                      transition={{ ...springSoft, filter: { duration: 0.5, ease: "easeOut" } }}
                     />
                   )}
                 </AnimatePresence>
               </div>
 
-              {/* Accessory row */}
+              {/* Accessory row — each with its own motion signature */}
               <div className="absolute inset-x-0 bottom-[13%] flex items-end justify-center gap-2.5 sm:gap-3.5">
                 {accessories.map((acc, idx) => {
                   const accStep = idx + 2;
+                  const variant = ACCESSORY_VARIANTS[acc.motion] || ACCESSORY_VARIANTS.fade;
                   return (
                     <AnimatePresence key={acc.key}>
                       {step >= accStep && (
@@ -133,10 +176,10 @@ export default function PackagingHamperVisual({
                           alt={acc.label || acc.key}
                           draggable={false}
                           className="w-8 h-8 sm:w-11 sm:h-11 object-contain drop-shadow-md"
-                          initial={{ opacity: 0, y: -14, scale: 0.85 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -14, scale: 0.85 }}
-                          transition={{ ...springSoft, delay: 0.05 }}
+                          initial={variant.initial}
+                          animate={variant.animate}
+                          exit={variant.exit}
+                          transition={variant.transition}
                         />
                       )}
                     </AnimatePresence>
@@ -160,7 +203,7 @@ export default function PackagingHamperVisual({
           )}
         </AnimatePresence>
 
-        {/* CLOSED HAMPER — matte chocolate-brown lid, no ribbon */}
+        {/* CLOSED HAMPER — matte lid, real logo image, no ribbon */}
         <AnimatePresence>
           {isClosed && (
             <motion.div
@@ -181,18 +224,36 @@ export default function PackagingHamperVisual({
                 className="absolute inset-x-[8%] top-[30%] h-px"
                 style={{ background: "rgba(255,255,255,0.1)" }}
               />
+
+              {/* Logo image — appears, then a single soft shine sweeps across it */}
               <AnimatePresence>
                 {showLogo && (
-                  <motion.p
-                    key="wordmark"
-                    className="absolute left-1/2 top-[62%] -translate-x-1/2 -translate-y-1/2 text-[10px] sm:text-xs tracking-[0.28em] font-heading uppercase whitespace-nowrap"
-                    style={{ color: "rgba(243,233,223,0.85)" }}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
+                  <motion.div
+                    key="logo"
+                    className="absolute left-1/2 top-[62%] -translate-x-1/2 -translate-y-1/2 relative overflow-hidden"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.5, ease: "easeOut" }}
                   >
-                    REVE CULT
-                  </motion.p>
+                    <img
+                      src={HAMPER_LOGO_URL}
+                      alt="REVE CULT"
+                      className="h-8 sm:h-10 w-auto object-contain"
+                      style={{ filter: "brightness(0) invert(1) opacity(0.85)" }}
+                      draggable={false}
+                    />
+                    <motion.div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          "linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.8) 50%, transparent 65%)",
+                        mixBlendMode: "overlay",
+                      }}
+                      initial={{ x: "-140%" }}
+                      animate={{ x: "140%" }}
+                      transition={{ duration: 0.9, ease: "easeInOut", delay: 0.15 }}
+                    />
+                  </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
