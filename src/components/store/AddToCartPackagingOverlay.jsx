@@ -10,7 +10,6 @@ export default function AddToCartPackagingOverlay() {
   const prefersReducedMotion = useReducedMotion();
 
   const product = activeRequest?.product;
-  const productImage = product?.hamper_image_url || product?.image_url;
 
   return (
     <AnimatePresence>
@@ -30,7 +29,7 @@ export default function AddToCartPackagingOverlay() {
             style={{
               backdropFilter: "blur(14px)",
               WebkitBackdropFilter: "blur(14px)",
-              background: "rgba(35,24,18,0.55)",
+              background: "rgba(35,24,18,0.5)",
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -46,7 +45,7 @@ export default function AddToCartPackagingOverlay() {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           >
             <PackagingHamperVisual
-              productImage={productImage}
+              productImage={product?.image_url}
               productAlt={product?.name}
               productLayoutId={product ? `product-image-${product.id}` : undefined}
               accessories={HAMPER_ACCESSORIES}

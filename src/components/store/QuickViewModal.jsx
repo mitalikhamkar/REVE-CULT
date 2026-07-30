@@ -279,17 +279,18 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                   }}
                 />
                 <AnimatePresence mode="wait">
-                  <motion.img
-                    key={currentImage}
-                    src={currentImage}
-                    alt={activeProduct.name}
-                    className="max-w-full max-h-full w-auto h-auto object-contain"
-                    initial={{ opacity: 0, scale: 1.05 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.4, ease: "easeOut" }}
-                  />
-                </AnimatePresence>
+  <motion.img
+    key={currentImage}
+    layoutId={`product-image-${activeProduct.id}`}
+    src={currentImage}
+    alt={activeProduct.name}
+    className="max-w-full max-h-full w-auto h-auto object-contain"
+    initial={{ opacity: 0, scale: 1.05 }}
+    animate={{ opacity: 1, scale: 1 }}
+    exit={{ opacity: 0, scale: 0.96 }}
+    transition={{ duration: 0.4, ease: "easeOut" }}
+  />
+</AnimatePresence>
 
                 <AnimatePresence>
                   {phase === "success" && (
