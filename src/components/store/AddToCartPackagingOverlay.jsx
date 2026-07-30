@@ -47,7 +47,7 @@ export default function AddToCartPackagingOverlay() {
             <PackagingHamperVisual
               productImage={product?.image_url}
               productAlt={product?.name}
-              productLayoutId={product ? `product-image-${product.id}` : undefined}
+              productLayoutId={activeRequest?.sourceLayoutId}
               accessories={HAMPER_ACCESSORIES}
               playing={!!activeRequest}
               reducedMotion={prefersReducedMotion}

@@ -8,11 +8,11 @@ export function PackingAnimationProvider({ children }) {
   const { addToCart } = useStore();
   const navigate = useNavigate();
   const [activeRequest, setActiveRequest] = useState(null);
-  // activeRequest shape: { id, product, quantity }
+  // activeRequest shape: { id, product, quantity, sourceLayoutId }
 
-  const triggerPackingAnimation = useCallback((product, quantity = 1) => {
+  const triggerPackingAnimation = useCallback((product, quantity = 1, sourceLayoutId) => {
     if (!product) return;
-    setActiveRequest({ product, quantity, id: `${product.id}-${Date.now()}` });
+    setActiveRequest({ product, quantity, sourceLayoutId, id: `${product.id}-${Date.now()}` });
   }, []);
 
   const handleComplete = useCallback(() => {

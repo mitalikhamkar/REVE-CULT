@@ -146,14 +146,14 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
   }, [phase]);
 
   const handleAddToCart = () => {
-    if (phase !== "revealed") return;
-    setPhase("success");
-    const t1 = setTimeout(() => {
-      triggerPackingAnimation(activeProduct, quantity);
-      onClose && onClose();
-    }, SUCCESS_HOLD);
-    timers.current.push(t1);
-  };
+  if (phase !== "revealed") return;
+  setPhase("success");
+  const t1 = setTimeout(() => {
+    triggerPackingAnimation(activeProduct, quantity, `product-image-quickview-${activeProduct.id}`);
+    onClose && onClose();
+  }, SUCCESS_HOLD);
+  timers.current.push(t1);
+};
 
   const goPrev = () => setImgIndex((i) => (i - 1 + gallery.length) % gallery.length);
   const goNext = () => setImgIndex((i) => (i + 1) % gallery.length);
@@ -280,9 +280,9 @@ export default function QuickViewModal({ product, onClose, originPoint }) {
                 />
                 <AnimatePresence mode="wait">
   <motion.img
-    key={currentImage}
-    layoutId={`product-image-${activeProduct.id}`}
-    src={currentImage}
+  key={currentImage}
+  layoutId={`product-image-quickview-${activeProduct.id}`}
+  src={currentImage}
     alt={activeProduct.name}
     className="max-w-full max-h-full w-auto h-auto object-contain"
     initial={{ opacity: 0, scale: 1.05 }}

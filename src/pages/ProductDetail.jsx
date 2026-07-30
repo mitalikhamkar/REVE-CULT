@@ -61,8 +61,8 @@ export default function ProductDetail() {
       : [product.image_url];
 
   const handleAddToCart = () => {
-    triggerPackingAnimation(product, quantity);
-  };
+  triggerPackingAnimation(product, quantity, `product-image-detail-${product.id}`);
+};
 
   return (
     <>
@@ -87,10 +87,11 @@ export default function ProductDetail() {
               }}
             >
               <ProductImageGallery
-                images={galleryImages}
-                alt={`${product.name} — ${product.color}`}
-                imgClassName="w-full aspect-square object-contain"
-              />
+  images={galleryImages}
+  alt={`${product.name} — ${product.color}`}
+  imgClassName="w-full aspect-square object-contain"
+  layoutId={`product-image-detail-${product.id}`}
+/>
               {product.has_anc && (
                 <span className="absolute top-4 right-4 z-10 bg-gold text-white text-[10px] font-semibold px-3 py-1 rounded-full">
                   ANC Enabled

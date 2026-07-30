@@ -1,18 +1,13 @@
 import React, { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Manual product image gallery (Hamper -> Earbuds -> Carry Pouch).
-// - Desktop: left/right arrows + dot indicators, appear on card hover
-//   (relies on the parent element having the existing `group` class).
-// - Mobile: swipe left/right.
-// - No auto-rotation, ever.
-// - If only one image is passed, renders a plain <img> with no controls
-//   so single-image products (apparel, accessories) are unaffected.
-//
-// Usage: drop this in place of the existing <img> — pass the same
-// className you were using on the <img> as `imgClassName` so sizing,
-// object-fit, and hover-scale transitions stay identical.
-export default function ProductImageGallery({ images, alt, imgClassName = "" }) {
+// Accepts an optional `layoutId` — when provided, the currently
+// displayed image is a motion.img with that layoutId, enabling a
+// Framer Motion shared-element flight (e.g. into the Add to Cart
+// packaging animation). When omitted, behaves exactly as before.
+export default function ProductImageGallery({ images, alt, imgClassName = "", layoutId }) {
   const list = images && images.length > 0 ? images : [];
   const [index, setIndex] = useState(0);
   const touchStartX = useRef(null);
@@ -47,7 +42,7 @@ export default function ProductImageGallery({ images, alt, imgClassName = "" }) 
   if (list.length === 0) return null;
 
   if (!hasMultiple) {
-    return <img src={list[0]} alt={alt} className={imgClassName} />;
+    return <motion.img layoutId={layoutId} src={list[0]} alt={alt} className={imgClassName} />;
   }
 
   return (
@@ -56,7 +51,7 @@ export default function ProductImageGallery({ images, alt, imgClassName = "" }) 
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <img key={list[index]} src={list[index]} alt={alt} className={imgClassName} />
+      <motion.img layoutId={layoutId} key={list[index]} src={list[index]} alt={alt} className={imgClassName} />
 
       {/* Desktop arrows — manual navigation only, revealed on hover */}
       <button
