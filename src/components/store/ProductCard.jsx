@@ -18,7 +18,7 @@ export default function ProductCard({ product, index = 0 }) {
   const handleAddToCart = (e) => {
   e.preventDefault();
   e.stopPropagation();
-  triggerPackingAnimation(product, 1, `product-image-grid-${product.id}`);
+  triggerPackingAnimation(product, 1);
 };
 
   const handleWishlist = (e) => {
@@ -65,11 +65,10 @@ export default function ProductCard({ product, index = 0 }) {
               doesn't read as an overly tall rectangle at 2-column width. */}
           <div className="relative h-44 sm:h-56 md:h-64 shrink-0 overflow-hidden bg-cream/60">
             <div className="absolute inset-0 flex items-center justify-center p-5 sm:p-7 md:p-8">
-              <ProductImageGallery
+<ProductImageGallery
   images={galleryImages}
   alt={`${product.name} — ${product.color}`}
   imgClassName="max-w-full max-h-full w-auto h-auto object-contain transition-transform duration-500 ease-out group-hover:scale-[1.05]"
-  layoutId={`product-image-grid-${product.id}`}
 />
             </div>
 

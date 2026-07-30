@@ -19,17 +19,21 @@ export default function AddToCartPackagingOverlay() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+          transition={{ duration: 0.42, ease: "easeOut" }}
           role="status"
           aria-live="polite"
           aria-label={`Packing ${product?.name || "your item"}`}
         >
+          {/* Near-opaque warm backdrop — strong enough that nothing behind
+              it (including whatever page loads next) is ever visible while
+              this overlay is mounted, only once it fully fades on exit. */}
           <motion.div
             className="absolute inset-0"
             style={{
-              backdropFilter: "blur(14px)",
-              WebkitBackdropFilter: "blur(14px)",
-              background: "rgba(35,24,18,0.5)",
+              backdropFilter: "blur(18px)",
+              WebkitBackdropFilter: "blur(18px)",
+              background:
+                "radial-gradient(ellipse at 50% 40%, rgba(58,40,28,0.88) 0%, rgba(28,18,12,0.94) 100%)",
             }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

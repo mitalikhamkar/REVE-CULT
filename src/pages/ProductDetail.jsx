@@ -61,7 +61,7 @@ export default function ProductDetail() {
       : [product.image_url];
 
   const handleAddToCart = () => {
-  triggerPackingAnimation(product, quantity, `product-image-detail-${product.id}`);
+  triggerPackingAnimation(product, quantity);
 };
 
   return (
@@ -86,11 +86,10 @@ export default function ProductDetail() {
                 boxShadow: "0 24px 56px -32px rgba(120,80,70,0.22), inset 0 1px 0 rgba(255,255,255,0.7)",
               }}
             >
-              <ProductImageGallery
+ <ProductImageGallery
   images={galleryImages}
   alt={`${product.name} — ${product.color}`}
   imgClassName="w-full aspect-square object-contain"
-  layoutId={`product-image-detail-${product.id}`}
 />
               {product.has_anc && (
                 <span className="absolute top-4 right-4 z-10 bg-gold text-white text-[10px] font-semibold px-3 py-1 rounded-full">
