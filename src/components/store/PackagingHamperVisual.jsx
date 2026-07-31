@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HAMPER_LOGO_URL } from "@/data/hamperAssets";
 
 const ACCESSORY_VARIANTS = {
   fade: {
@@ -29,8 +28,6 @@ const ACCESSORY_VARIANTS = {
   },
 };
 
-const COMPLETION_SOUND_SRC = "/audio/hamper-complete.mp3";
-
 export default function PackagingHamperVisual({
   productImage,
   productAlt = "Selected product",
@@ -49,24 +46,10 @@ export default function PackagingHamperVisual({
   const logoStep = totalItemSteps + 3;
 
   const [step, setStep] = useState(0);
-  const soundPlayedRef = useRef(false);
-
-  const playCompletionSound = () => {
-    if (soundPlayedRef.current) return;
-    soundPlayedRef.current = true;
-    try {
-      const audio = new Audio(COMPLETION_SOUND_SRC);
-      audio.volume = 0.55;
-      audio.play().catch(() => {});
-    } catch {
-      // no-op
-    }
-  };
 
   useEffect(() => {
     if (!playing) {
       setStep(0);
-      soundPlayedRef.current = false;
       return;
     }
 
@@ -74,14 +57,12 @@ export default function PackagingHamperVisual({
       setStep(closeStep);
       const t = setTimeout(() => {
         setStep(logoStep);
-        playCompletionSound();
         setTimeout(() => onComplete && onComplete(), 450);
       }, 400);
       return () => clearTimeout(t);
     }
 
     setStep(0);
-    soundPlayedRef.current = false;
     const timers = [];
     const STEP_MS = 820;
     for (let i = 1; i <= totalItemSteps; i++) {
@@ -92,12 +73,7 @@ export default function PackagingHamperVisual({
     const closeAt = settleAt + 900;
     timers.push(setTimeout(() => setStep(closeStep), closeAt));
     const logoAt = closeAt + 950;
-    timers.push(
-      setTimeout(() => {
-        setStep(logoStep);
-        playCompletionSound();
-      }, logoAt)
-    );
+    timers.push(setTimeout(() => setStep(logoStep), logoAt));
     timers.push(setTimeout(() => onComplete && onComplete(), logoAt + 850));
 
     return () => timers.forEach(clearTimeout);
@@ -110,11 +86,6 @@ export default function PackagingHamperVisual({
   const springSoft = { type: "spring", stiffness: 120, damping: 18 };
   const springSettle = { type: "spring", stiffness: 90, damping: 16 };
 
-  // Only apply our own fade/blur entrance when there is NO shared
-  // layoutId — i.e. no live "flight" is already handling the entrance.
-  // When a layoutId IS present (Quick View), initial={false} lets the
-  // shared-layout transition be the ONLY entrance animation, avoiding
-  // a double-animation where the product appears to arrive twice.
   const productInitial = productLayoutId
     ? false
     : { opacity: 0, scale: 0.85, filter: "blur(6px)" };
@@ -135,7 +106,6 @@ export default function PackagingHamperVisual({
         animate={{ scale: isClosed ? 1 : 1.015 }}
         transition={springSoft}
       >
-        {/* OPEN HAMPER */}
         <AnimatePresence>
           {!isClosed && (
             <motion.div
@@ -227,7 +197,6 @@ export default function PackagingHamperVisual({
           )}
         </AnimatePresence>
 
-        {/* CLOSED HAMPER — matte lid, logo dead-center on the lid */}
         <AnimatePresence>
           {isClosed && (
             <motion.div
@@ -250,34 +219,16 @@ export default function PackagingHamperVisual({
 
               <AnimatePresence>
                 {showLogo && (
-                  <motion.div
-                    key="logo"
-                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden"
-                    initial={{ opacity: 0, scale: 0.88 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.55, ease: "easeOut" }}
+                  <motion.p
+                    key="wordmark"
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-sm sm:text-base tracking-[0.32em] font-heading uppercase whitespace-nowrap"
+                    style={{ color: "rgba(243,233,223,0.9)" }}
+                    initial={{ opacity: 0, letterSpacing: "0.15em" }}
+                    animate={{ opacity: 1, letterSpacing: "0.32em" }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
                   >
-                    <img
-                      src={HAMPER_LOGO_URL}
-                      alt="REVE CULT"
-                      className="h-11 sm:h-14 w-auto object-contain"
-                      style={{
-                        filter: "brightness(2.1) saturate(1.15) drop-shadow(0 1px 2px rgba(0,0,0,0.35))",
-                      }}
-                      draggable={false}
-                    />
-                    <motion.div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background:
-                          "linear-gradient(115deg, transparent 35%, rgba(255,255,255,0.8) 50%, transparent 65%)",
-                        mixBlendMode: "overlay",
-                      }}
-                      initial={{ x: "-140%" }}
-                      animate={{ x: "140%" }}
-                      transition={{ duration: 0.9, ease: "easeInOut", delay: 0.2 }}
-                    />
-                  </motion.div>
+                    REVE CULT
+                  </motion.p>
                 )}
               </AnimatePresence>
             </motion.div>

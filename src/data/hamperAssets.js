@@ -8,4 +8,3 @@ export const HAMPER_ACCESSORIES = [
   { key: "card", image_url: "/images/hamper-animation/warrenty_card.png", label: "Warranty Card", motion: "bounce" },
 ];
 
-export const HAMPER_LOGO_URL = "/images/hamper-animation/logo-mark.png";
