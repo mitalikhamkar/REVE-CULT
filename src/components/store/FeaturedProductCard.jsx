@@ -5,13 +5,6 @@ import { useStore } from "@/context/StoreContext";
 import QuickViewModal from "@/components/store/QuickViewModal";
 import ProductImageGallery from "@/components/store/ProductImageGallery";
 
-/**
- * FeaturedProductCard — a large, horizontal, editorial presentation for a
- * single hero product (used for Apparel and Accessories, where a
- * landscape-oriented lifestyle image looks lost inside a small grid card).
- * Reuses the exact same cart/wishlist/Quick View logic as ProductCard —
- * only the layout is different.
- */
 export default function FeaturedProductCard({ product }) {
   const { addToCart, toggleWishlist, isInWishlist } = useStore();
   const [added, setAdded] = useState(false);
@@ -38,8 +31,6 @@ export default function FeaturedProductCard({ product }) {
     setQuickViewOpen(true);
   };
 
-  // Default image is the Hamper image; gallery also includes Earbuds + Carry
-  // Pouch when available. Falls back to the single product image otherwise.
   const galleryImages =
     product.gallery_images && product.gallery_images.length > 0
       ? product.gallery_images
@@ -63,7 +54,6 @@ export default function FeaturedProductCard({ product }) {
         >
           {/* LEFT — large lifestyle image, never stretched */}
           <div className="relative h-64 sm:h-auto min-h-[280px] flex items-center justify-center p-8 sm:p-10">
-            {/* ANC-only badge — shown solely when the product supports it */}
             {product.has_anc && (
               <span className="absolute top-5 left-5 z-10 bg-gold text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
                 ANC
@@ -89,8 +79,8 @@ export default function FeaturedProductCard({ product }) {
 
           {/* RIGHT — info */}
           <div className="flex flex-col justify-center p-8 sm:p-10 lg:p-12 border-t sm:border-t-0 sm:border-l border-white/50">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-blush mb-2">{product.collection}</p>
-            <h3 className="text-2xl lg:text-3xl font-heading font-light leading-snug mb-3">{product.name}</h3>
+            <p className="product-collection-label mb-2">{product.collection}</p>
+            <h3 className="product-title text-2xl lg:text-3xl leading-snug mb-3">{product.name}</h3>
 
             {product.description && (
               <p className="text-sm text-muted-foreground leading-relaxed mb-5 line-clamp-3 max-w-md">
@@ -99,9 +89,9 @@ export default function FeaturedProductCard({ product }) {
             )}
 
             <div className="flex items-center gap-4 mb-6">
-              <span className="text-xl font-heading font-semibold text-foreground">₹{product.price}</span>
+              <span className="product-price text-xl">₹{product.price}</span>
               {product.color && (
-                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                <span className="product-color-label flex items-center gap-1.5">
                   <span className="w-3.5 h-3.5 rounded-full border border-border" style={{ background: product.color_hex }} />
                   {product.color}
                 </span>
