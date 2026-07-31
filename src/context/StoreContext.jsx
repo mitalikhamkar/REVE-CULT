@@ -54,6 +54,7 @@ const addToCart = useCallback((product, quantity = 1, options = {}) => {
           product_image: product.image_url,
           product_price: product.price,
           color: product.color,
+          collection: product.collection || null,
           quantity,
           type: product.type || "product",
           earbuds: product.earbuds || null,
@@ -66,9 +67,6 @@ const addToCart = useCallback((product, quantity = 1, options = {}) => {
     setCartPulse(true);
     setTimeout(() => setCartPulse(false), 1600);
 
-    // Skip the toast when the caller already showed its own confirmation
-    // (e.g. the Add to Cart packaging animation) — avoids a redundant
-    // "Added to Cart" popping up right after that sequence finishes.
     if (options.suppressToast) return;
 
     setCartToast({
@@ -82,7 +80,6 @@ const addToCart = useCallback((product, quantity = 1, options = {}) => {
       setCartToast((prev) => (prev.visible ? { visible: false, product: null } : prev));
     }, TOAST_DURATION_MS);
   }, []);
-
   const dismissCartToast = useCallback(() => {
     setCartToast({ visible: false, product: null });
   }, []);
