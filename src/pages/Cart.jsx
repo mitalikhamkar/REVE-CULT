@@ -52,11 +52,14 @@ export default function Cart() {
                   <img src={item.product_image} alt={item.product_name} className="w-24 h-24 rounded-xl object-cover shrink-0" />
                 </Link>
                 <div className="flex-1 min-w-0">
-                  <Link to={`/product/${item.product_id}`} className="text-sm font-medium hover:text-blush transition-colors line-clamp-1">
+                  <Link
+                    to={`/product/${item.product_id}`}
+                    className="product-title hover:text-blush transition-colors line-clamp-1 block"
+                  >
                     {item.product_name}
                   </Link>
-                  {item.color && <p className="text-xs text-muted-foreground mt-0.5">{item.color}</p>}
-                  <p className="text-base font-heading font-semibold mt-1">₹{item.product_price}</p>
+                  {item.color && <p className="product-color-label mt-0.5">{item.color}</p>}
+                  <p className="product-price mt-1">₹{item.product_price}</p>
                   <div className="flex items-center justify-between mt-3">
                     <div className="flex items-center border border-border rounded-full">
                       <button
@@ -85,7 +88,7 @@ export default function Cart() {
                 </div>
                 <div className="text-right shrink-0">
                   <p className="text-xs text-muted-foreground">Subtotal</p>
-                  <p className="text-base font-heading font-semibold">₹{item.product_price * item.quantity}</p>
+                  <p className="product-title mt-0.5">₹{item.product_price * item.quantity}</p>
                 </div>
               </div>
             )
@@ -156,11 +159,6 @@ export default function Cart() {
   );
 }
 
-/**
- * Signature Box cart card — renders as ONE premium product (large hamper
- * image, no separate earbuds line item), per the Signature Box spec.
- * No link to a product detail page since the box isn't a catalog product.
- */
 function SignatureBoxCartCard({ item, updateQuantity, removeFromCart }) {
   return (
     <div className="flex flex-col sm:flex-row gap-4 p-4 bg-white rounded-2xl border border-border animate-fade-in">
@@ -171,7 +169,7 @@ function SignatureBoxCartCard({ item, updateQuantity, removeFromCart }) {
       />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-medium">{item.product_name}</p>
+          <p className="product-title">{item.product_name}</p>
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-blush/10 text-blush text-[10px] font-medium uppercase tracking-wide">
             <Gift size={10} /> Gift Set
           </span>
@@ -197,7 +195,7 @@ function SignatureBoxCartCard({ item, updateQuantity, removeFromCart }) {
           </div>
         )}
 
-        <p className="text-base font-heading font-semibold mt-2">₹{item.product_price}</p>
+        <p className="product-price mt-2">₹{item.product_price}</p>
 
         <div className="flex items-center justify-between mt-3">
           <div className="flex items-center border border-border rounded-full">
@@ -227,7 +225,7 @@ function SignatureBoxCartCard({ item, updateQuantity, removeFromCart }) {
       </div>
       <div className="text-right shrink-0">
         <p className="text-xs text-muted-foreground">Subtotal</p>
-        <p className="text-base font-heading font-semibold">₹{item.product_price * item.quantity}</p>
+        <p className="product-title mt-0.5">₹{item.product_price * item.quantity}</p>
       </div>
     </div>
   );
