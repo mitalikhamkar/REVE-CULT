@@ -33,9 +33,9 @@ The project is currently under active development. Some of the areas being worke
 
 ---
 
-##Frontend 
-Frontend has deployed on Vercel 
-https://reve-cult.vercel.app/
+## Frontend 
+
+Frontend has deployed on Vercel : https://reve-cult.vercel.app/
 
 
 **Developer:** Mitali Khamkar and Vishnupriya
