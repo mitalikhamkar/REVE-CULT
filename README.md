@@ -35,3 +35,6 @@ The project is currently under active development. Some of the areas being worke
 
 **Developer:** Mitali Khamkar and Vishnupriya
 Website Development Intern
+
+##Frontend has deployed on Vercel 
+https://reve-cult.vercel.app/
