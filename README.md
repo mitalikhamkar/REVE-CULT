@@ -41,6 +41,4 @@ https://reve-cult.vercel.app/
 **Developer:** Mitali Khamkar and Vishnupriya
 Website Development Intern
 
-##Frontend 
-Frontend has deployed on Vercel 
-https://reve-cult.vercel.app/
+
